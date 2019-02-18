@@ -2,6 +2,7 @@ package com.example.notpinball;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,23 +17,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
     }
 
     public void gamePlay(View v)
     {
         Log.d("NPB", "gamePlay");
+        startActivity(new Intent(this, NotPinball.class));
     }
 
-    public void gameCreateUser(View v)
+    public void gameUserManager(View v)
     {
-        Log.d("NPB", "gameCreateUser");
-
+        Log.d("NPB", "gameUserManager");
+        startActivity(new Intent(this, UserManager.class));
     }
 
     public void gameViewHighscores(View v)
     {
         Log.d("NPB", "gameViewHighscores");
-
+        startActivity(new Intent(this, Highscores.class));
     }
 }
