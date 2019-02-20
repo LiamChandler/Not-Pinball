@@ -9,31 +9,33 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    }
-
-    public void gamePlay(View v)
-    {
-        Log.d("NPB", "gamePlay");
-        startActivity(new Intent(this, NotPinball.class));
-    }
-
-    public void gameUserManager(View v)
-    {
-        Log.d("NPB", "gameUserManager");
-        startActivity(new Intent(this, UserManager.class));
-    }
-
-    public void gameViewHighscores(View v)
-    {
-        Log.d("NPB", "gameViewHighscores");
-        startActivity(new Intent(this, Highscores.class));
-    }
+public class MainActivity extends AppCompatActivity
+{
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
+	
+	public void gamePlay(View v)
+	{
+		Log.d("NPB", "gamePlay");
+		startActivity(new Intent(this, NotPinball.class));
+	}
+	
+	public void gameUserManager(View v)
+	{
+		Log.d("NPB", "gameUserManager");
+		startActivity(new Intent(this, UserManager.class));
+	}
+	
+	public void gameViewHighscores(View v)
+	{
+		Log.d("NPB", "gameViewHighscores");
+		startActivity(new Intent(this, Highscores.class));
+	}
 }
