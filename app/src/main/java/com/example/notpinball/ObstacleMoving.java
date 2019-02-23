@@ -10,7 +10,7 @@ public class ObstacleMoving extends npbObject
 {
 	public ObstacleMoving(float X, float Y, int Radius)
 	{
-		super(X,Y,Radius);
+		super(X, Y, Radius);
 		thisType = type.ObstacleMoving;
 	}
 	
@@ -18,17 +18,17 @@ public class ObstacleMoving extends npbObject
 	public void draw(Canvas canvas)
 	{
 		Paint p1 = new Paint();
-		p1.setColor(Color.rgb(0,128,0));
+		p1.setColor(Color.rgb(0, 128, 0));
 		canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
 	}
 	
 	@Override
-	public boolean update(List<npbObject> sprites)
+	public void update(List<npbObject> sprites)
 	{
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if(x!= other.x && y != other.y)
+			if (x != other.x && y != other.y && other.thisType != type.nonColliding)
 			{
 				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
 				
@@ -56,6 +56,5 @@ public class ObstacleMoving extends npbObject
 			dY = -dY;
 			y += dY;
 		}
-		return false;
 	}
 }

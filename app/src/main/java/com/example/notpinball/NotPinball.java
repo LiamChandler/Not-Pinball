@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,9 @@ public class NotPinball extends AppCompatActivity
 	SensorManager sensorMgr;
 	Sensor accelerometer;
 	AccelerometerListener listener;
+	TextView healthDisplay, scoreDisplay;
 	
-	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed = 10, playerHealth;
+	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed = 5, playerHealth, score, textSize;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos = 0;
 	
@@ -60,13 +62,28 @@ public class NotPinball extends AppCompatActivity
 		screenWidth = displayMetrics.widthPixels;
 		radiusPlayer = displayMetrics.densityDpi / 8;
 		radiusObstacle = displayMetrics.densityDpi / 10;
+		textSize = (int) (displayMetrics.densityDpi / 15);
 		
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
 		GraphicsView gv = new GraphicsView(this);
+		
 		gv.setY(gameOffset);
 		gv.setBackgroundColor(Color.GRAY);
 		layout.addView(gv, params);
+		healthDisplay = new TextView(this);
+		healthDisplay.setTextColor(Color.WHITE);
+		healthDisplay.setX(screenWidth * 0.1f);
+		healthDisplay.setY(5);
+		healthDisplay.setTextSize(textSize);
+		layout.addView(healthDisplay);
+		scoreDisplay = new TextView(this);
+		scoreDisplay.setTextColor(Color.WHITE);
+		scoreDisplay.setX(screenWidth * 0.55f);
+		scoreDisplay.setY(5);
+		scoreDisplay.setTextSize(textSize);
+		layout.addView(scoreDisplay);
+		
 		
 		create();
 		
@@ -78,14 +95,20 @@ public class NotPinball extends AppCompatActivity
 	{
 		sprites = new ArrayList<>();
 		
+		score = 0;
 		cameraPos = 0;
 		playerHealth = 50;
 		
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
-		
-		generateObstacles(30);
+		sprites.add(new finishLine(gameLength));
+		generateObstacles(25);
 	}
 	
+	private void showLivesScore()
+	{
+		scoreDisplay.setText("Score: " + score);
+		healthDisplay.setText("Health: " + playerHealth);
+	}
 	
 	private void generateObstacles(int number)
 	{
@@ -93,36 +116,35 @@ public class NotPinball extends AppCompatActivity
 		npbObject[] tmpObjects = new npbObject[number];
 		boolean noClashes = false, clash = false;
 		
-		for(int i = 0; i < number; i++)
+		for (int i = 0; i < number; i++)
 		{
 			float obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
 			float obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
-			while(!noClashes)
+			while (!noClashes)
 			{
 				float distToPlayer = (float) Math.hypot(Math.abs(sprites.get(0).getX() - obX), Math.abs(sprites.get(0).getY() - obY));
-				if(distToPlayer < (radiusPlayer * 4))
+				if (distToPlayer < (radiusPlayer * 4))
 					clash = true;
 				else
 				{
-					if(tmpObjects[0] == null)
+					if (tmpObjects[0] == null)
 						clash = false;
 					else
-						for(npbObject o : tmpObjects)
+						for (npbObject o : tmpObjects)
 						{
-							if(o != null)
+							if (o != null)
 							{
 								float dist = (float) Math.hypot(Math.abs(o.getX() - obX), Math.abs(o.getY() - obY));
-								if(dist < minDist)
+								if (dist < minDist)
 								{
 									clash = true;
 									break;
-								}
-								else
+								} else
 									clash = false;
 							}
 						}
 				}
-				if(!clash)
+				if (!clash)
 					noClashes = true;
 				else
 				{
@@ -134,18 +156,17 @@ public class NotPinball extends AppCompatActivity
 			
 			int randNum = rand.nextInt(3); // total 5
 			
-			if(randNum == 0)
+			if (randNum == 0)
 				tmpObjects[i] = new ObstacleSolid(obX, obY, radiusObstacle);
 			else if (randNum == 1)
 			{
 				npbObject tmp = new ObstacleMoving(obX, obY, radiusObstacle);
-				tmp.setdX(((rand.nextFloat()*maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
-				tmp.setdY(((rand.nextFloat()*maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
+				tmp.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
+				tmp.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
 				tmpObjects[i] = tmp;
-			}
-			else if(randNum == 2)
+			} else if (randNum == 2)
 				tmpObjects[i] = new ObstacleSpike(obX, obY, radiusObstacle);
-				
+			
 			
 			sprites.add(tmpObjects[i]);
 		}
@@ -156,7 +177,7 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		public void onSensorChanged(SensorEvent sensorEvent)
 		{
-            sprites.get(0).moddX(-sensorEvent.values[0]/5);
+			sprites.get(0).moddX(-sensorEvent.values[0] / 5);
 		}
 		
 		@Override
@@ -177,14 +198,18 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		protected void onDraw(Canvas canvas)
 		{
+			List<npbObject> tmp = new ArrayList<>();
 			for (int i = 0; i < sprites.size(); i++)
 			{
-//				if (true)//(sprites.get(i).getX() > cameraPos - (screenHeight * 0.1) && sprites.get(i).getX() < cameraPos + (screenHeight * 1.1f)) || i==0)		Optimization code for not rendering everything
-//				{
-					sprites.get(i).update(sprites);
-					sprites.get(i).draw(canvas);
-//				}
+				if (sprites.get(i).dead)
+					tmp.add(sprites.get(i));
+				sprites.get(i).update(sprites);
+				sprites.get(i).draw(canvas);
+				showLivesScore();
 			}
+			
+			for (npbObject n : tmp)
+				sprites.remove(n);
 			
 			invalidate();
 		}

@@ -9,9 +9,11 @@ import java.util.List;
 
 public class ObstacleSpike extends npbObject
 {
+	private float spikeHeight = 14;
+	
 	public ObstacleSpike(float X, float Y, int Radius)
 	{
-		super(X,Y,Radius);
+		super(X, Y, Radius);
 		thisType = type.ObstacleSpiked;
 	}
 	
@@ -24,17 +26,19 @@ public class ObstacleSpike extends npbObject
 		
 		Path path = new Path();
 		path.setFillType(Path.FillType.EVEN_ODD);
-		path.moveTo(x,y - NotPinball.cameraPos);
+		float xOffset = x, yOffset = y - NotPinball.cameraPos, spikeSpacing = (float) (Math.PI * 0.0625), halfSpikeSpacing;
+		halfSpikeSpacing = spikeSpacing * 0.5f;
 		
-		for(float i = 0; i < 2* Math.PI; i += Math.PI*0.1)
+		path.moveTo(xOffset + radius - spikeHeight, y - NotPinball.cameraPos);
+		for (float i = -halfSpikeSpacing; i < (2 * Math.PI); i += spikeSpacing)
 		{
-			path.lineTo((float) (Math.sin(i)*radius+2.5),(float) (Math.cos(i)*radius+2.5) - NotPinball.cameraPos);
-			path.lineTo((float) (Math.sin(i+0.05)*radius-2.5),(float) (Math.cos(i+0.05)*radius-2.5) - NotPinball.cameraPos);
+			path.lineTo((float) (Math.cos(i) * (radius)) + xOffset, (float) (Math.sin(i) * (radius)) + yOffset);
+			path.lineTo((float) (Math.cos(i + halfSpikeSpacing) * (radius - spikeHeight)) + xOffset, (float) (Math.sin(i + halfSpikeSpacing) * (radius - spikeHeight)) + yOffset);
 		}
 		
-		path.lineTo(x,y - NotPinball.cameraPos);
+		path.lineTo(x, y - NotPinball.cameraPos);
 		path.close();
 		
-		canvas.drawPath(path,p1);
+		canvas.drawPath(path, p1);
 	}
 }

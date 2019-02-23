@@ -21,21 +21,21 @@ public class Player extends npbObject
 	public void draw(Canvas canvas)
 	{
 		Paint p1 = new Paint();
-		p1.setColor(Color.rgb(128,64,0));
+		p1.setColor(Color.rgb(128, 64, 0));
 		canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
 	}
 	
 	@Override
-	public boolean update(List<npbObject> sprites)
+	public void update(List<npbObject> sprites)
 	{
 		super.update(sprites);
 		
-		if(dY < NotPinball.maxSpeed)
-			dY+= 0.2;
+		if (dY < NotPinball.maxSpeed)
+			dY += 0.2;
 		
-		if(dX > 0.2)
+		if (dX > 0.2)
 			dX -= 0.2;
-		else if(dX < -0.2)
+		else if (dX < -0.2)
 			dX += 0.2;
 		
 		for (int i = 1; i < sprites.size(); i++)
@@ -45,15 +45,16 @@ public class Player extends npbObject
 			
 			if (dist <= radius + sprites.get(i).getRadius())
 			{
-				if(other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
+				if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 				{
 					NotPinball.playerHealth--;
-					float nX = (other.getX() - x) / dist, nY = (other.getY() - y) / dist;
-					float tX = -nY, tY = nX;
-					float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-					
-					dX = tX * dpTan + nX * -dpNorm;
-					dY = tY * dpTan + nY * -dpNorm;
+					sprites.add(new textShow(x,y,NotPinball.textSize,"-1"));
+					bounceOffRound(other, dist);
+				} else if (other.thisType == type.ObstacleSpiked)
+				{
+					NotPinball.playerHealth -= 5;
+					sprites.add(new textShow(x,y,NotPinball.textSize,"-5"));
+					bounceOffRound(other, dist);
 				}
 				
 				Log.d("NPB", "Player Hit object Health = " + NotPinball.playerHealth);
@@ -67,8 +68,16 @@ public class Player extends npbObject
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * scrollPos;
 		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone))
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
+	}
+	
+	private void bounceOffRound(npbObject other, float dist)
+	{
+		float nX = (other.getX() - x) / dist, nY = (other.getY() - y) / dist;
+		float tX = -nY, tY = nX;
+		float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
 		
-		return false;
+		dX = tX * dpTan + nX * -dpNorm;
+		dY = tY * dpTan + nY * -dpNorm;
 	}
 	
 }

@@ -12,7 +12,10 @@ public abstract class npbObject
 	protected boolean dead = false;
 	protected type thisType;
 	
-	public enum type {Player, ObstacleSolid, ObstacleMovable, ObstacleMoving, ObstacleTarget, ObstacleSpiked}
+	public enum type
+	{
+		Player, ObstacleSolid, ObstacleMovable, ObstacleMoving, ObstacleTarget, ObstacleSpiked, nonColliding
+	}
 	
 	public npbObject(float X, float Y, int Radius)
 	{
@@ -21,7 +24,7 @@ public abstract class npbObject
 		y = Y;
 	}
 	
-	public boolean update(List<npbObject> sprites)
+	public void update(List<npbObject> sprites)
 	{
 		if (((x + dX + radius) < NotPinball.screenWidth) && (x + dX - radius > 0))
 			x += dX;
@@ -38,7 +41,6 @@ public abstract class npbObject
 			dY = -dY;
 			y += dY;
 		}
-		return false;
 	}
 	
 	public abstract void draw(Canvas canvas);
@@ -75,8 +77,8 @@ public abstract class npbObject
 	
 	public void moddX(float modDX)
 	{
-		if(x >= 0 && x<= NotPinball.screenWidth)
-			if(Math.abs(dX + modDX)< NotPinball.maxSpeed)
+		if (x >= 0 && x <= NotPinball.screenWidth)
+			if (Math.abs(dX + modDX) < NotPinball.maxSpeed)
 				dX += modDX;
 	}
 	
