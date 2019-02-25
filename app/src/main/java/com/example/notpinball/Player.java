@@ -6,10 +6,14 @@ import android.graphics.Paint;
 import android.util.Log;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Player extends npbObject
 {
-	private float scrollPos = 0.15f, scrollZone = 0.3f;
+	private Timer timer = new Timer();
+	private boolean timerCoolDown = false;
+	private float scrollPos = 0.15f, scrollZone = 0.3f, playerMaxPos = 0;
 	
 	public Player(float X, float Y, int Radius)
 	{
@@ -30,6 +34,14 @@ public class Player extends npbObject
 	{
 		super.update(sprites);
 		
+		if(y> NotPinball.gameLength)
+			won = true;
+		if(y>playerMaxPos)
+		{
+			playerMaxPos = y;
+			NotPinball.currScore = (int) (playerMaxPos / (NotPinball.screenHeight * 0.04f));
+		}
+		
 		if (dY < NotPinball.maxSpeed)
 			dY += 0.2;
 		
@@ -43,21 +55,31 @@ public class Player extends npbObject
 			npbObject other = sprites.get(i);
 			float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
 			
-			if (dist <= radius + sprites.get(i).getRadius())
+			if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding)
 			{
-				if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
+				if (!timerCoolDown)
 				{
-					NotPinball.playerHealth--;
-					sprites.add(new textShow(x,y,NotPinball.textSize,"-1"));
-					bounceOffRound(other, dist);
-				} else if (other.thisType == type.ObstacleSpiked)
-				{
-					NotPinball.playerHealth -= 5;
-					sprites.add(new textShow(x,y,NotPinball.textSize,"-5"));
-					bounceOffRound(other, dist);
+					if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
+					{
+						NotPinball.playerHealth--;
+						sprites.add(new textShow(x, y, NotPinball.textSize*2, "-1"));
+						bounceOffRound(other, dist);
+					} else if (other.thisType == type.ObstacleSpiked)
+					{
+						NotPinball.playerHealth -= 5;
+						sprites.add(new textShow(x, y, NotPinball.textSize*2, "-5"));
+						bounceOffRound(other, dist);
+					}
+					if(NotPinball.playerHealth <= 0)
+						lose = true;
+					
+					timerCoolDown = true;
+					timer.schedule(new shortCoolDown(), (long) 150);
 				}
 				
-				Log.d("NPB", "Player Hit object Health = " + NotPinball.playerHealth);
+				float fOverlap = dist - radius - other.radius;
+				x -= (fOverlap * (x - other.x) / dist) * 0.8f;
+				y -= (fOverlap * (y - other.y) / dist) * 0.8f;
 			}
 		}
 		
@@ -66,7 +88,7 @@ public class Player extends npbObject
 		
 		if (y - NotPinball.cameraPos < NotPinball.screenHeight * scrollPos && NotPinball.cameraPos > 0)
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * scrollPos;
-		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone))
+		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone) && NotPinball.cameraPos < NotPinball.gameLength - (NotPinball.screenHeight * (scrollPos + scrollZone)))
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
 	}
 	
@@ -78,6 +100,15 @@ public class Player extends npbObject
 		
 		dX = tX * dpTan + nX * -dpNorm;
 		dY = tY * dpTan + nY * -dpNorm;
+	}
+	
+	class shortCoolDown extends TimerTask
+	{
+		@Override
+		public void run()
+		{
+			timerCoolDown = false;
+		}
 	}
 	
 }

@@ -35,7 +35,7 @@ public class NotPinball extends AppCompatActivity
 	AccelerometerListener listener;
 	TextView healthDisplay, scoreDisplay;
 	
-	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed = 5, playerHealth, score, textSize;
+	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore = 0, totalScore = 0, textSize;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos = 0;
 	
@@ -47,27 +47,24 @@ public class NotPinball extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
 		gestureListener = new MyGestureListener();
 		gestureDetector = new GestureDetectorCompat(this, gestureListener);
-		
 		sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelerometer = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		listener = new AccelerometerListener();
-		
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		screenHeight = displayMetrics.heightPixels + 100;
+		screenHeight = displayMetrics.heightPixels + 200;
 		gameLength = screenHeight * 4;
 		screenWidth = displayMetrics.widthPixels;
 		radiusPlayer = displayMetrics.densityDpi / 8;
 		radiusObstacle = displayMetrics.densityDpi / 10;
-		textSize = (int) (displayMetrics.densityDpi / 15);
-		
+		textSize = (int)((float)(screenHeight)/(float)(screenWidth) * 10);
+		maxSpeed = (int)((float)(screenHeight)/(float)(screenWidth) * 3);
+		Log.d("NPB", "maxSpeed = " + maxSpeed);
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
 		GraphicsView gv = new GraphicsView(this);
-		
 		gv.setY(gameOffset);
 		gv.setBackgroundColor(Color.GRAY);
 		layout.addView(gv, params);
@@ -83,21 +80,22 @@ public class NotPinball extends AppCompatActivity
 		scoreDisplay.setY(5);
 		scoreDisplay.setTextSize(textSize);
 		layout.addView(scoreDisplay);
-		
-		
-		create();
-		
 		layout.setBackgroundColor(Color.BLACK);
 		setContentView(layout);
+		
+		currScore = 0;
+		totalScore = 0;
+		playerHealth = 50;
+		
+		create();
 	}
 	
 	private void create()
 	{
 		sprites = new ArrayList<>();
 		
-		score = 0;
+		currScore = 0;
 		cameraPos = 0;
-		playerHealth = 50;
 		
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
 		sprites.add(new finishLine(gameLength));
@@ -106,7 +104,7 @@ public class NotPinball extends AppCompatActivity
 	
 	private void showLivesScore()
 	{
-		scoreDisplay.setText("Score: " + score);
+		scoreDisplay.setText("Score: " + (currScore + totalScore));
 		healthDisplay.setText("Health: " + playerHealth);
 	}
 	
@@ -172,6 +170,21 @@ public class NotPinball extends AppCompatActivity
 		}
 	}
 	
+	public void winRound()
+	{
+		Log.d("NPB", "Win");
+		totalScore += currScore;
+		create();
+	}
+	
+	public void loseRound()
+	{
+		Log.d("NPB", "Lose");
+		create();
+		playerHealth = 50;
+		totalScore = 0;
+	}
+	
 	class AccelerometerListener implements SensorEventListener
 	{
 		@Override
@@ -189,6 +202,7 @@ public class NotPinball extends AppCompatActivity
 	
 	public class GraphicsView extends View
 	{
+		List<npbObject> tmp = new ArrayList<>();
 		
 		public GraphicsView(Context c)
 		{
@@ -198,19 +212,25 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		protected void onDraw(Canvas canvas)
 		{
-			List<npbObject> tmp = new ArrayList<>();
-			for (int i = 0; i < sprites.size(); i++)
+			if(sprites.get(0).won)
+				winRound();
+			else if(sprites.get(0).lose)
+				loseRound();
+			else
 			{
-				if (sprites.get(i).dead)
-					tmp.add(sprites.get(i));
-				sprites.get(i).update(sprites);
-				sprites.get(i).draw(canvas);
-				showLivesScore();
+				for (int i = 0; i < sprites.size(); i++)
+				{
+					if (sprites.get(i).dead)
+						tmp.add(sprites.get(i));
+					
+					sprites.get(i).update(sprites);
+					sprites.get(i).draw(canvas);
+					showLivesScore();
+				}
+				
+				for (npbObject n : tmp)
+					sprites.remove(n);
 			}
-			
-			for (npbObject n : tmp)
-				sprites.remove(n);
-			
 			invalidate();
 		}
 		

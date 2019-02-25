@@ -9,7 +9,7 @@ public abstract class npbObject
 {
 	protected float x, y, dX, dY, accdX, accdY;
 	protected int radius;
-	protected boolean dead = false;
+	protected boolean dead = false, won = false, lose = false;
 	protected type thisType;
 	
 	public enum type
@@ -34,13 +34,18 @@ public abstract class npbObject
 			x += dX;
 		}
 		
-		if (((y + dY + radius) < NotPinball.gameLength) && (y + dY - radius > 0))
+		if (((y + dY + radius) < NotPinball.gameLength) || thisType == type.Player && (y + dY - radius > 0))
 			y += dY;
 		else
 		{
 			dY = -dY;
 			y += dY;
 		}
+		
+		if(x+radius<0)
+			x++;
+		else if(x-radius>NotPinball.screenWidth)
+			x--;
 	}
 	
 	public abstract void draw(Canvas canvas);

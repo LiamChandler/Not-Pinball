@@ -9,7 +9,7 @@ public class textShow extends npbObject
 {
 	private String text;
 	
-	int alpha = 400;
+	int alpha = 350;
 	
 	public textShow(float X, float Y, int TextSize, String Text)
 	{
