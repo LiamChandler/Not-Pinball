@@ -63,7 +63,7 @@ public class ObstacleMoving extends npbObject
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if (x != other.x && y != other.y && other.thisType != type.nonColliding)
+			if (x != other.x && y != other.y && other.thisType != type.nonColliding && other.thisType != type.ObstacleTarget)
 			{
 				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
 				

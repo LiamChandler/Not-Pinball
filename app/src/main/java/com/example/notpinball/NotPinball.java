@@ -24,18 +24,21 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NotPinball extends AppCompatActivity
 {
-	Random rand = new Random();
-	MyGestureListener gestureListener;
-	GestureDetectorCompat gestureDetector;
-	SensorManager sensorMgr;
-	Sensor accelerometer;
-	AccelerometerListener listener;
-	TextView healthDisplay, scoreDisplay;
+	private Random rand = new Random();
+	private GestureDetectorCompat gestureDetector;
+	private SensorManager sensorMgr;
+	private Sensor accelerometer;
+	private AccelerometerListener listener;
+	private TextView healthDisplay, scoreDisplay;
+	private Timer winTimer = new Timer();
+	private Boolean winTimerBool = false, run;
 	
-	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore, totalScore, textSize, Level;
+	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos;
 	
@@ -44,6 +47,7 @@ public class NotPinball extends AppCompatActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		MyGestureListener gestureListener;
 		super.onCreate(savedInstanceState);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -59,13 +63,12 @@ public class NotPinball extends AppCompatActivity
 		screenWidth = displayMetrics.widthPixels;
 		radiusPlayer = displayMetrics.densityDpi / 8;
 		radiusObstacle = displayMetrics.densityDpi / 10;
-		textSize = (int)((float)(screenHeight)/(float)(screenWidth) * 10);
-		maxSpeed = (int)((float)(screenHeight)/(float)(screenWidth) * 4);
+		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 10);
+		maxSpeed = (int) ((float) (screenHeight) / (float) (screenWidth) * 4);
 		Log.d("NPB", "maxSpeed = " + maxSpeed);
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
 		GraphicsView gv = new GraphicsView(this);
-		gv.setY(gameOffset);
 		gv.setBackgroundColor(Color.GRAY);
 		layout.addView(gv, params);
 		healthDisplay = new TextView(this);
@@ -93,20 +96,28 @@ public class NotPinball extends AppCompatActivity
 	
 	private void create()
 	{
-		sprites = new ArrayList<>();
-		
 		currScore = 0;
 		cameraPos = 0;
+		run = false;
 		
+		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
-		sprites.add(new finishLine(gameLength));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight / 2f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
-		generateObstacles(20 + (5 * Level));
+		generateObstacles(20 + (2 * Level));
+		sprites.add(new finishLine(gameLength, screenHeight / 20f));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.32f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.55f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
+		if(Level == 1)
+			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.2f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
+		
+		for (int i = sprites.size() - 1; i >= 0; i--)
+			sprites.get(i).update(sprites);
+		for (int i = sprites.size() - 1; i >= 0; i--)
+			sprites.get(i).update(sprites);
 	}
 	
 	private void showLivesScore()
 	{
-		String tmp ="Score: " + (currScore + totalScore);
+		String tmp = "Score: " + (currScore + totalScore);
 		scoreDisplay.setText(tmp);
 		tmp = "Health: " + playerHealth;
 		healthDisplay.setText(tmp);
@@ -114,39 +125,44 @@ public class NotPinball extends AppCompatActivity
 	
 	private void generateObstacles(int number)
 	{
-		int solid = (int)(number * 0.5),
-			moving = (int)(number * 0.25),
-			spike = (int)(number * 0.15),
-			target = (int)(number * 0.10);
+		int solid = (int) (number * 0.5),
+				moving = (int) (number * 0.25),
+				spike = (int) (number * 0.15),
+				target = (int) (number * 0.10);
 		boolean tmp = true;
-		while(tmp)
+		while (tmp)
 		{
 			int total = solid + moving + spike + target;
-			if(total != number)
+			if (total != number)
 			{
-				if(total<number)
+				if (total < number)
 					solid++;
 				else
 					solid--;
-			}
-			else
+			} else
 				tmp = false;
 		}
 		
-		for(int i = 0; i < solid; i++) sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
+		int percent = (int) (gameLength - screenHeight * 0.3f) / solid;
+		for (int i = 0; i < solid; i++)
+			sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
 		
-		for(int i = 0; i < moving; i++)
+		percent = (int) (gameLength - screenHeight * 0.3f) / moving;
+		for (int i = 0; i < moving; i++)
 		{
-			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle, radiusObstacle);
+			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle);
 			tmpO.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
 			tmpO.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
 			sprites.add(tmpO);
 		}
-		for(int i = 0; i < spike; i++) sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
 		
-		for(int i = 0; i < target; i++) sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
+		percent = (int) (gameLength - screenHeight * 0.3f) / spike;
+		for (int i = 0; i < spike; i++)
+			sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
 		
-		
+		percent = (int) (gameLength - screenHeight * 0.3f) / target;
+		for (int i = 0; i < target; i++)
+			sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
 	}
 	
 	public void winRound()
@@ -155,14 +171,17 @@ public class NotPinball extends AppCompatActivity
 		totalScore += currScore;
 		Level++;
 		create();
+		run = false;
 	}
 	
 	public void loseRound()
 	{
 		Log.d("NPB", "Lose");
-		create();
+		Level = 1;
 		playerHealth = 50;
 		totalScore = 0;
+		create();
+		run = false;
 	}
 	
 	class AccelerometerListener implements SensorEventListener
@@ -170,7 +189,8 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		public void onSensorChanged(SensorEvent sensorEvent)
 		{
-			sprites.get(0).moddX(-sensorEvent.values[0] / 5);
+			if(!sprites.isEmpty() && run)
+				sprites.get(0).moddX(-sensorEvent.values[0] / 5);
 		}
 		
 		@Override
@@ -178,7 +198,6 @@ public class NotPinball extends AppCompatActivity
 		{
 		}
 	}
-	
 	
 	public class GraphicsView extends View
 	{
@@ -192,24 +211,29 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		protected void onDraw(Canvas canvas)
 		{
-			if(sprites.get(0).won)
-				winRound();
-			else if(sprites.get(0).lose)
-				loseRound();
-			else
+			if (!sprites.isEmpty())
 			{
-				for (int i = sprites.size()-1; i >= 0; i--)
+				if (!winTimerBool && sprites.get(0).won)
 				{
-					if (sprites.get(i).dead)
-						tmp.add(sprites.get(i));
+					winTimer.schedule(new winTimerTask(), (long) 2000);
+					winTimerBool = true;
+				} else if (sprites.get(0).lose)
+					loseRound();
+				else
+				{
+					for (int i = sprites.size() - 1; i >= 0; i--)
+					{
+						if (sprites.get(i).dead)
+							tmp.add(sprites.get(i));
+						if (run)
+							sprites.get(i).update(sprites);
+						sprites.get(i).draw(canvas);
+						showLivesScore();
+					}
 					
-					sprites.get(i).update(sprites);
-					sprites.get(i).draw(canvas);
-					showLivesScore();
+					for (npbObject n : tmp)
+						sprites.remove(n);
 				}
-				
-				for (npbObject n : tmp)
-					sprites.remove(n);
 			}
 			invalidate();
 		}
@@ -238,6 +262,9 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		public boolean onSingleTapUp(MotionEvent e)
 		{
+			if(!run)
+				run = true;
+				
 			return false;
 		}
 		
@@ -259,7 +286,6 @@ public class NotPinball extends AppCompatActivity
 		}
 	}
 	
-	
 	@Override
 	protected void onPause()
 	{
@@ -276,72 +302,14 @@ public class NotPinball extends AppCompatActivity
 		sensorMgr.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
 		Log.d("NPB", "OnResume");
 	}
-}
-
-
-/*      OLD CODE
-
-	private void generateObstacles(int number)
+	
+	class winTimerTask extends TimerTask
 	{
-		float minDist = (radiusPlayer * 3) + (radiusObstacle * 2);
-		npbObject[] tmpObjects = new npbObject[number];
-		boolean noClashes = false, clash = false;
-		
-		for (int i = 0; i < number; i++)
+		@Override
+		public void run()
 		{
-			float obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
-			float obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
-			while (!noClashes)
-			{
-				float distToPlayer = (float) Math.hypot(Math.abs(sprites.get(0).getX() - obX), Math.abs(sprites.get(0).getY() - obY));
-				if (distToPlayer < (radiusPlayer * 4))
-					clash = true;
-				else
-				{
-					if (tmpObjects[0] == null)
-						clash = false;
-					else
-						for (npbObject o : tmpObjects)
-						{
-							if (o != null)
-							{
-								float dist = (float) Math.hypot(Math.abs(o.getX() - obX), Math.abs(o.getY() - obY));
-								if (dist < minDist)
-								{
-									clash = true;
-									break;
-								} else
-									clash = false;
-							}
-						}
-				}
-				if (!clash)
-					noClashes = true;
-				else
-				{
-					obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
-					obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
-				}
-			}
-			noClashes = false;
-			
-			int randNum = rand.nextInt(100);
-			int solidChance = 50, movingChance = 65, spikeChance = 90;
-			
-			if (randNum <= solidChance)
-				tmpObjects[i] = new ObstacleSolid(obX, obY, radiusObstacle);
-			else if (randNum <= movingChance)
-			{
-				npbObject tmp = new ObstacleMoving(obX, obY, radiusObstacle);
-				tmp.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
-				tmp.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
-				tmpObjects[i] = tmp;
-			} else if (randNum <= spikeChance)
-				tmpObjects[i] = new ObstacleSpike(obX, obY, radiusObstacle);
-			else
-				tmpObjects[i] = new ObstacleTarget(obX, obY, radiusObstacle);
-			
-			sprites.add(tmpObjects[i]);
+			winRound();
+			winTimerBool = false;
 		}
 	}
- */
+}

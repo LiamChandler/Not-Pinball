@@ -36,10 +36,10 @@ public class Player extends npbObject
 		
 		if(y> NotPinball.gameLength)
 			won = true;
-		if(y>playerMaxPos)
+		if(y>playerMaxPos && !won)
 		{
 			playerMaxPos = y;
-			NotPinball.currScore = (int) ((playerMaxPos / (NotPinball.screenHeight * 0.04f)))* NotPinball.Level;
+			NotPinball.currScore = (int) ((playerMaxPos / (NotPinball.screenHeight * 0.0399f)))* NotPinball.Level;
 		}
 		
 		if (dY < NotPinball.maxSpeed)
@@ -81,10 +81,6 @@ public class Player extends npbObject
 					timerCoolDown = true;
 					timer.schedule(new shortCoolDown(), (long) 150);
 				}
-				/*
-				float fOverlap = dist - radius - other.radius;
-				x -= (fOverlap * (x - other.x) / dist) * 0.8f;
-				y -= (fOverlap * (y - other.y) / dist) * 0.8f;*/
 			}
 		}
 		
