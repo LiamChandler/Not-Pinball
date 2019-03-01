@@ -1,6 +1,7 @@
 package com.example.notpinball;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.Log;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public abstract class npbObject
 	
 	public enum type
 	{
-		Player, ObstacleSolid, ObstacleMovable, ObstacleMoving, ObstacleTarget, ObstacleSpiked, nonColliding
+		Player, ObstacleSolid, ObstacleMoving, ObstacleTarget, ObstacleSpiked, nonColliding
 	}
 	
 	public npbObject(float X, float Y, int Radius)
@@ -46,6 +47,20 @@ public abstract class npbObject
 			x++;
 		else if(x-radius>NotPinball.screenWidth)
 			x--;
+		
+		
+		for (int i = 1; i < sprites.size(); i++)
+		{
+			npbObject other = sprites.get(i);
+			float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
+			
+			if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
+			{
+				float fOverlap = dist - radius - other.radius;
+				x -= (fOverlap * (x - other.x) / dist) * 0.8f;
+				y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+			}
+		}
 	}
 	
 	public abstract void draw(Canvas canvas);

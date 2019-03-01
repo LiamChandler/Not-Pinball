@@ -4,12 +4,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class textShow extends npbObject
 {
 	private String text;
 	private int color;
+	private boolean fading = true;
 	
 	int alpha = 350;
 	
@@ -21,12 +24,14 @@ public class textShow extends npbObject
 		color = Color;
 	}
 	
-	public textShow(float X, float Y, int TextSize, String Text)
+	public textShow(float X,float Y, int TextSize,String Text, int Color, int Fade)
 	{
-		super(X, Y, TextSize*2);
+		super(X, Y, TextSize * 2);
 		thisType = type.nonColliding;
 		text = Text;
-		color = Color.rgb(0,0,0);
+		color = Color;
+		fading = false;
+		alpha = Fade;
 	}
 	
 	@Override
@@ -42,15 +47,19 @@ public class textShow extends npbObject
 		p.setColor(color);
 		p.setAlpha(tmpAlpha);
 		p.setTextSize(radius);
+		p.setTextAlign(Paint.Align.CENTER);
 		canvas.drawText(text, x, y - NotPinball.cameraPos, p);
 	}
 	
 	@Override
 	public void update(List<npbObject> sprites)
 	{
-		if(alpha > 0)
-			alpha -= 3;
-		else
-			dead = true;
+		if(fading)
+		{
+			if (alpha > 0)
+				alpha -= 3;
+			else
+				dead = true;
+		}
 	}
 }

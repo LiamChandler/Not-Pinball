@@ -23,7 +23,7 @@ public class ObstacleMoving extends npbObject
 	{
 		Point[] points = new Point[65];
 		Paint p1 = new Paint(Paint.ANTI_ALIAS_FLAG);
-		p1.setColor(Color.rgb(0, 255, 0));
+		p1.setColor(Color.rgb(0, 180, 0));
 		
 		Path path = new Path();
 		path.setFillType(Path.FillType.EVEN_ODD);

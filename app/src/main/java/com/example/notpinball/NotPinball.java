@@ -35,9 +35,9 @@ public class NotPinball extends AppCompatActivity
 	AccelerometerListener listener;
 	TextView healthDisplay, scoreDisplay;
 	
-	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore = 0, totalScore = 0, textSize, Level = 1;
+	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore, totalScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
-	public static float cameraPos = 0;
+	public static float cameraPos;
 	
 	List<npbObject> sprites;
 	
@@ -60,7 +60,7 @@ public class NotPinball extends AppCompatActivity
 		radiusPlayer = displayMetrics.densityDpi / 8;
 		radiusObstacle = displayMetrics.densityDpi / 10;
 		textSize = (int)((float)(screenHeight)/(float)(screenWidth) * 10);
-		maxSpeed = (int)((float)(screenHeight)/(float)(screenWidth) * 3);
+		maxSpeed = (int)((float)(screenHeight)/(float)(screenWidth) * 4);
 		Log.d("NPB", "maxSpeed = " + maxSpeed);
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
@@ -96,80 +96,57 @@ public class NotPinball extends AppCompatActivity
 		
 		currScore = 0;
 		cameraPos = 0;
+		Level = 1;
 		
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
 		sprites.add(new finishLine(gameLength));
-		generateObstacles(25);
+		sprites.add(new textShow(screenWidth / 2f, screenHeight / 2f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
+		generateObstacles(20 + (5 * Level));
 	}
 	
 	private void showLivesScore()
 	{
-		scoreDisplay.setText("Score: " + (currScore + totalScore));
-		healthDisplay.setText("Health: " + playerHealth);
+		String tmp ="Score: " + (currScore + totalScore);
+		scoreDisplay.setText(tmp);
+		tmp = "Health: " + playerHealth;
+		healthDisplay.setText(tmp);
 	}
 	
 	private void generateObstacles(int number)
 	{
-		float minDist = (radiusPlayer * 4) + (radiusObstacle * 2);
-		npbObject[] tmpObjects = new npbObject[number];
-		boolean noClashes = false, clash = false;
-		
-		for (int i = 0; i < number; i++)
+		int solid = (int)(number * 0.5),
+			moving = (int)(number * 0.25),
+			spike = (int)(number * 0.15),
+			target = (int)(number * 0.10);
+		boolean tmp = true;
+		while(tmp)
 		{
-			float obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
-			float obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
-			while (!noClashes)
+			int total = solid + moving + spike + target;
+			if(total != number)
 			{
-				float distToPlayer = (float) Math.hypot(Math.abs(sprites.get(0).getX() - obX), Math.abs(sprites.get(0).getY() - obY));
-				if (distToPlayer < (radiusPlayer * 4))
-					clash = true;
+				if(total<number)
+					solid++;
 				else
-				{
-					if (tmpObjects[0] == null)
-						clash = false;
-					else
-						for (npbObject o : tmpObjects)
-						{
-							if (o != null)
-							{
-								float dist = (float) Math.hypot(Math.abs(o.getX() - obX), Math.abs(o.getY() - obY));
-								if (dist < minDist)
-								{
-									clash = true;
-									break;
-								} else
-									clash = false;
-							}
-						}
-				}
-				if (!clash)
-					noClashes = true;
-				else
-				{
-					obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
-					obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
-				}
+					solid--;
 			}
-			noClashes = false;
-			
-			int randNum = rand.nextInt(100);
-			int solidChance = 50, movingChance = 65, spikeChance = 90;
-			
-			if (randNum <= solidChance)
-				tmpObjects[i] = new ObstacleSolid(obX, obY, radiusObstacle);
-			else if (randNum <= movingChance)
-			{
-				npbObject tmp = new ObstacleMoving(obX, obY, radiusObstacle);
-				tmp.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
-				tmp.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
-				tmpObjects[i] = tmp;
-			} else if (randNum <= spikeChance)
-				tmpObjects[i] = new ObstacleSpike(obX, obY, radiusObstacle);
 			else
-				tmpObjects[i] = new ObstacleTarget(obX, obY, radiusObstacle);
-			
-			sprites.add(tmpObjects[i]);
+				tmp = false;
 		}
+		
+		for(int i = 0; i < solid; i++) sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
+		
+		for(int i = 0; i < moving; i++)
+		{
+			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle, radiusObstacle);
+			tmpO.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
+			tmpO.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
+			sprites.add(tmpO);
+		}
+		for(int i = 0; i < spike; i++) sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
+		
+		for(int i = 0; i < target; i++) sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle,rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle,radiusObstacle));
+		
+		
 	}
 	
 	public void winRound()
@@ -221,7 +198,7 @@ public class NotPinball extends AppCompatActivity
 				loseRound();
 			else
 			{
-				for (int i = 0; i < sprites.size(); i++)
+				for (int i = sprites.size()-1; i >= 0; i--)
 				{
 					if (sprites.get(i).dead)
 						tmp.add(sprites.get(i));
@@ -300,3 +277,71 @@ public class NotPinball extends AppCompatActivity
 		Log.d("NPB", "OnResume");
 	}
 }
+
+
+/*      OLD CODE
+
+	private void generateObstacles(int number)
+	{
+		float minDist = (radiusPlayer * 3) + (radiusObstacle * 2);
+		npbObject[] tmpObjects = new npbObject[number];
+		boolean noClashes = false, clash = false;
+		
+		for (int i = 0; i < number; i++)
+		{
+			float obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
+			float obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
+			while (!noClashes)
+			{
+				float distToPlayer = (float) Math.hypot(Math.abs(sprites.get(0).getX() - obX), Math.abs(sprites.get(0).getY() - obY));
+				if (distToPlayer < (radiusPlayer * 4))
+					clash = true;
+				else
+				{
+					if (tmpObjects[0] == null)
+						clash = false;
+					else
+						for (npbObject o : tmpObjects)
+						{
+							if (o != null)
+							{
+								float dist = (float) Math.hypot(Math.abs(o.getX() - obX), Math.abs(o.getY() - obY));
+								if (dist < minDist)
+								{
+									clash = true;
+									break;
+								} else
+									clash = false;
+							}
+						}
+				}
+				if (!clash)
+					noClashes = true;
+				else
+				{
+					obX = rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle;
+					obY = rand.nextInt(gameLength - (radiusObstacle * 2)) + radiusObstacle;
+				}
+			}
+			noClashes = false;
+			
+			int randNum = rand.nextInt(100);
+			int solidChance = 50, movingChance = 65, spikeChance = 90;
+			
+			if (randNum <= solidChance)
+				tmpObjects[i] = new ObstacleSolid(obX, obY, radiusObstacle);
+			else if (randNum <= movingChance)
+			{
+				npbObject tmp = new ObstacleMoving(obX, obY, radiusObstacle);
+				tmp.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
+				tmp.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
+				tmpObjects[i] = tmp;
+			} else if (randNum <= spikeChance)
+				tmpObjects[i] = new ObstacleSpike(obX, obY, radiusObstacle);
+			else
+				tmpObjects[i] = new ObstacleTarget(obX, obY, radiusObstacle);
+			
+			sprites.add(tmpObjects[i]);
+		}
+	}
+ */

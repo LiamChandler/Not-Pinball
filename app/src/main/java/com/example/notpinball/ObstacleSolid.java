@@ -21,7 +21,7 @@ public class ObstacleSolid extends npbObject
 	{
 		Point[] points = new Point[65];
 		Paint p1 = new Paint(Paint.ANTI_ALIAS_FLAG);
-		p1.setColor(Color.rgb(0, 0, 255));
+		p1.setColor(Color.rgb(0, 0, 200));
 		
 		Path path = new Path();
 		path.setFillType(Path.FillType.EVEN_ODD);

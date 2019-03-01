@@ -39,16 +39,16 @@ public class Player extends npbObject
 		if(y>playerMaxPos)
 		{
 			playerMaxPos = y;
-			NotPinball.currScore = (int) (playerMaxPos / (NotPinball.screenHeight * 0.04f));
+			NotPinball.currScore = (int) ((playerMaxPos / (NotPinball.screenHeight * 0.04f)))* NotPinball.Level;
 		}
 		
 		if (dY < NotPinball.maxSpeed)
 			dY += 0.2;
 		
-		if (dX > 0.2)
-			dX -= 0.2;
-		else if (dX < -0.2)
-			dX += 0.2;
+		if (dX > 0.1)
+			dX -= 0.1;
+		else if (dX < -0.1)
+			dX += 0.1;
 		
 		for (int i = 1; i < sprites.size(); i++)
 		{
@@ -81,10 +81,10 @@ public class Player extends npbObject
 					timerCoolDown = true;
 					timer.schedule(new shortCoolDown(), (long) 150);
 				}
-				
+				/*
 				float fOverlap = dist - radius - other.radius;
 				x -= (fOverlap * (x - other.x) / dist) * 0.8f;
-				y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+				y -= (fOverlap * (y - other.y) / dist) * 0.8f;*/
 			}
 		}
 		
