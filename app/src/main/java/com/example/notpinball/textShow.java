@@ -1,6 +1,7 @@
 package com.example.notpinball;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import java.util.List;
@@ -8,14 +9,24 @@ import java.util.List;
 public class textShow extends npbObject
 {
 	private String text;
+	private int color;
 	
 	int alpha = 350;
+	
+	public textShow(float X,float Y, int TextSize,String Text, int Color)
+	{
+		super(X, Y, TextSize * 2);
+		thisType = type.nonColliding;
+		text = Text;
+		color = Color;
+	}
 	
 	public textShow(float X, float Y, int TextSize, String Text)
 	{
 		super(X, Y, TextSize*2);
 		thisType = type.nonColliding;
 		text = Text;
+		color = Color.rgb(0,0,0);
 	}
 	
 	@Override
@@ -28,7 +39,8 @@ public class textShow extends npbObject
 			tmpAlpha = 255;
 		
 		Paint p = new Paint();
-		p.setARGB(tmpAlpha, 0, 0, 0);
+		p.setColor(color);
+		p.setAlpha(tmpAlpha);
 		p.setTextSize(radius);
 		canvas.drawText(text, x, y - NotPinball.cameraPos, p);
 	}

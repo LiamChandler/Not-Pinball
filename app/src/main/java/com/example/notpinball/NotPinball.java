@@ -35,7 +35,7 @@ public class NotPinball extends AppCompatActivity
 	AccelerometerListener listener;
 	TextView healthDisplay, scoreDisplay;
 	
-	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore = 0, totalScore = 0, textSize;
+	public static int screenWidth, screenHeight, gameLength, gameOffset, maxSpeed, playerHealth, currScore = 0, totalScore = 0, textSize, Level = 1;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos = 0;
 	
@@ -152,19 +152,21 @@ public class NotPinball extends AppCompatActivity
 			}
 			noClashes = false;
 			
-			int randNum = rand.nextInt(3); // total 5
+			int randNum = rand.nextInt(100);
+			int solidChance = 50, movingChance = 65, spikeChance = 90;
 			
-			if (randNum == 0)
+			if (randNum <= solidChance)
 				tmpObjects[i] = new ObstacleSolid(obX, obY, radiusObstacle);
-			else if (randNum == 1)
+			else if (randNum <= movingChance)
 			{
 				npbObject tmp = new ObstacleMoving(obX, obY, radiusObstacle);
 				tmp.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
 				tmp.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
 				tmpObjects[i] = tmp;
-			} else if (randNum == 2)
+			} else if (randNum <= spikeChance)
 				tmpObjects[i] = new ObstacleSpike(obX, obY, radiusObstacle);
-			
+			else
+				tmpObjects[i] = new ObstacleTarget(obX, obY, radiusObstacle);
 			
 			sprites.add(tmpObjects[i]);
 		}
@@ -174,6 +176,7 @@ public class NotPinball extends AppCompatActivity
 	{
 		Log.d("NPB", "Win");
 		totalScore += currScore;
+		Level++;
 		create();
 	}
 	

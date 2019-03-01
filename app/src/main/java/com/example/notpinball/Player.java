@@ -62,15 +62,20 @@ public class Player extends npbObject
 					if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 					{
 						NotPinball.playerHealth--;
-						sprites.add(new textShow(x, y, NotPinball.textSize*2, "-1"));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-1", Color.rgb(180, 0, 0)));
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleSpiked)
 					{
 						NotPinball.playerHealth -= 5;
-						sprites.add(new textShow(x, y, NotPinball.textSize*2, "-5"));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-5", Color.rgb(180, 0, 0)));
 						bounceOffRound(other, dist);
+					} else if (other.thisType == type.ObstacleTarget)
+					{
+						NotPinball.totalScore += NotPinball.Level;
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.Level, Color.rgb(0, 200, 0)));
+						other.dead = true;
 					}
-					if(NotPinball.playerHealth <= 0)
+					if (NotPinball.playerHealth <= 0)
 						lose = true;
 					
 					timerCoolDown = true;
