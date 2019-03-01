@@ -86,6 +86,7 @@ public class NotPinball extends AppCompatActivity
 		currScore = 0;
 		totalScore = 0;
 		playerHealth = 50;
+		Level = 1;
 		
 		create();
 	}
@@ -96,7 +97,6 @@ public class NotPinball extends AppCompatActivity
 		
 		currScore = 0;
 		cameraPos = 0;
-		Level = 1;
 		
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
 		sprites.add(new finishLine(gameLength));
