@@ -43,12 +43,12 @@ public class Player extends npbObject
 		}
 		
 		if (dY < NotPinball.maxSpeed)
-			dY += 0.2;
+			dY += 0.3;
 		
-		if (dX > 0.1)
-			dX -= 0.1;
-		else if (dX < -0.1)
-			dX += 0.1;
+		if (dX > 0.05)
+			dX -= 0.05;
+		else if (dX < -0.05)
+			dX += 0.05;
 		
 		for (int i = 1; i < sprites.size(); i++)
 		{

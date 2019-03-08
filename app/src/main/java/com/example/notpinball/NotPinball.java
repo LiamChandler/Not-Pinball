@@ -56,15 +56,17 @@ public class NotPinball extends AppCompatActivity
 		sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelerometer = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		listener = new AccelerometerListener();
+		
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenHeight = displayMetrics.heightPixels + 200;
 		gameLength = screenHeight * 4;
 		screenWidth = displayMetrics.widthPixels;
-		radiusPlayer = displayMetrics.densityDpi / 8;
-		radiusObstacle = displayMetrics.densityDpi / 10;
+		radiusPlayer = (int)(screenWidth / 17.5);
+		radiusObstacle = screenWidth / 20;
 		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 10);
-		maxSpeed = (int) ((float) (screenHeight) / (float) (screenWidth) * 4);
+		maxSpeed = screenHeight / 220;
+		
 		Log.d("NPB", "maxSpeed = " + maxSpeed);
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
@@ -151,8 +153,8 @@ public class NotPinball extends AppCompatActivity
 		for (int i = 0; i < moving; i++)
 		{
 			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle);
-			tmpO.setdX(((rand.nextFloat() * maxSpeed * 0.5f) - maxSpeed * 0.25f) + 2.5f);
-			tmpO.setdY(((rand.nextFloat() * maxSpeed) * 0.25f) - (maxSpeed * 0.125f));
+			tmpO.setdX(((rand.nextFloat() * maxSpeed / 2f) - maxSpeed /4f) + 2.5f);
+			tmpO.setdY(((rand.nextFloat() * maxSpeed) / 8f) - (maxSpeed / 16f));
 			sprites.add(tmpO);
 		}
 		
@@ -177,7 +179,7 @@ public class NotPinball extends AppCompatActivity
 	public void loseRound()
 	{
 		Log.d("NPB", "Lose");
-		Level = 1;
+		//Level = 1;
 		playerHealth = 50;
 		totalScore = 0;
 		create();
