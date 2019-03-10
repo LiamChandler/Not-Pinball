@@ -36,11 +36,12 @@ public class NotPinball extends AppCompatActivity
 	private AccelerometerListener listener;
 	private TextView healthDisplay, scoreDisplay;
 	private Timer winTimer = new Timer();
-	private Boolean winTimerBool = false, run;
+	private Boolean winTimerBool = false, run = false;
 	
-	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, textSize, Level;
+	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos;
+	public static final int playerMaxHealth = 5;
 	
 	List<npbObject> sprites;
 	
@@ -90,7 +91,8 @@ public class NotPinball extends AppCompatActivity
 		
 		currScore = 0;
 		totalScore = 0;
-		playerHealth = 50;
+		lastTargetScore = 0;
+		playerHealth = playerMaxHealth;
 		Level = 1;
 		
 		create();
@@ -100,11 +102,11 @@ public class NotPinball extends AppCompatActivity
 	{
 		currScore = 0;
 		cameraPos = 0;
-		run = false;
+		//run = false;
 		
 		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
-		generateObstacles(20 + (2 * Level));
+		generateObstacles(15 + Level);
 		sprites.add(new finishLine(gameLength, screenHeight / 20f));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.32f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.55f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
@@ -129,8 +131,8 @@ public class NotPinball extends AppCompatActivity
 	{
 		int solid = (int) (number * 0.5),
 				moving = (int) (number * 0.25),
-				spike = (int) (number * 0.15),
-				target = (int) (number * 0.10);
+				spike = (int) (number * 0.10),
+				target = (int) (number * 0.15);
 		boolean tmp = true;
 		while (tmp)
 		{
@@ -169,21 +171,17 @@ public class NotPinball extends AppCompatActivity
 	
 	public void winRound()
 	{
-		Log.d("NPB", "Win");
 		totalScore += currScore;
 		Level++;
 		create();
-		run = false;
 	}
 	
 	public void loseRound()
 	{
-		Log.d("NPB", "Lose");
-		//Level = 1;
-		playerHealth = 50;
+		playerHealth = playerMaxHealth;
 		totalScore = 0;
+		lastTargetScore = 0;
 		create();
-		run = false;
 	}
 	
 	class AccelerometerListener implements SensorEventListener
@@ -225,14 +223,18 @@ public class NotPinball extends AppCompatActivity
 				{
 					for (int i = sprites.size() - 1; i >= 0; i--)
 					{
-						if (sprites.get(i).dead)
-							tmp.add(sprites.get(i));
-						if (run)
-							sprites.get(i).update(sprites);
-						sprites.get(i).draw(canvas);
-						showLivesScore();
+						if (!sprites.isEmpty())
+						{
+							if (sprites.get(i).dead)
+								tmp.add(sprites.get(i));
+							if (run)
+								sprites.get(i).update(sprites);
+							sprites.get(i).draw(canvas);
+							showLivesScore();
+						}
+						else
+							break;
 					}
-					
 					for (npbObject n : tmp)
 						sprites.remove(n);
 				}

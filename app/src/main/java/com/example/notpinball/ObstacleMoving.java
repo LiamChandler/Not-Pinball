@@ -80,7 +80,7 @@ public class ObstacleMoving extends npbObject
 		else
 		{
 			dX = -dX;
-			dY = -dY;
+			//dY = -dY;
 			x += dX;
 		}
 		

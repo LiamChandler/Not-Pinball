@@ -71,8 +71,14 @@ public class Player extends npbObject
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleTarget)
 					{
-						NotPinball.totalScore += NotPinball.Level;
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.Level, Color.rgb(0, 200, 0)));
+						NotPinball.lastTargetScore += NotPinball.Level;
+						NotPinball.totalScore += NotPinball.lastTargetScore;
+						
+						NotPinball.playerHealth ++;
+						if(NotPinball.playerHealth > NotPinball.playerMaxHealth)
+							NotPinball.playerHealth = NotPinball.playerMaxHealth;
+						
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0)));
 						other.dead = true;
 					}
 					if (NotPinball.playerHealth <= 0)
