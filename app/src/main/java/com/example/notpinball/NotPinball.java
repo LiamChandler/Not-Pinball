@@ -35,8 +35,8 @@ public class NotPinball extends AppCompatActivity
 	private Sensor accelerometer;
 	private AccelerometerListener listener;
 	private TextView healthDisplay, scoreDisplay;
-	private Timer winTimer = new Timer();
-	private Boolean winTimerBool = false, run = false;
+	private Timer winTimer = new Timer(), loseTimer = new Timer();
+	private Boolean winTimerBool = false, loseTimerBool = false, run;
 	
 	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
@@ -102,7 +102,7 @@ public class NotPinball extends AppCompatActivity
 	{
 		currScore = 0;
 		cameraPos = 0;
-		//run = false;
+		run = false;
 		
 		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
@@ -215,10 +215,14 @@ public class NotPinball extends AppCompatActivity
 			{
 				if (!winTimerBool && sprites.get(0).won)
 				{
-					winTimer.schedule(new winTimerTask(), (long) 2000);
+					winTimer.schedule(new winTimerTask(), (long) 1250);
 					winTimerBool = true;
-				} else if (sprites.get(0).lose)
-					loseRound();
+				} else if (!loseTimerBool && sprites.get(0).lose)
+				{
+					loseTimer.schedule(new loseTimerTask(), (long) 1500);
+					sprites.get(0).dying = true;
+					loseTimerBool = true;
+				}
 				else
 				{
 					for (int i = sprites.size() - 1; i >= 0; i--)
@@ -314,6 +318,16 @@ public class NotPinball extends AppCompatActivity
 		{
 			winRound();
 			winTimerBool = false;
+		}
+	}
+	
+	class loseTimerTask extends TimerTask
+	{
+		@Override
+		public void run()
+		{
+			loseRound();
+			loseTimerBool = false;
 		}
 	}
 }

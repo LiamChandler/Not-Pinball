@@ -34,12 +34,17 @@ public class Player extends npbObject
 	{
 		super.update(sprites);
 		
+		
 		if(y> NotPinball.gameLength)
 			won = true;
 		if(y>playerMaxPos && !won)
 		{
 			playerMaxPos = y;
 			NotPinball.currScore = (int) ((playerMaxPos / (NotPinball.screenHeight * 0.0399f)))* NotPinball.Level;
+		}
+		if(dying && radius >=1)
+		{
+			radius--;
 		}
 		
 		if (dY < NotPinball.maxSpeed)
@@ -82,8 +87,10 @@ public class Player extends npbObject
 						other.dead = true;
 					}
 					if (NotPinball.playerHealth <= 0)
+					{
 						lose = true;
-					
+						NotPinball.playerHealth=0;
+					}
 					timerCoolDown = true;
 					timer.schedule(new shortCoolDown(), (long) 150);
 				}
