@@ -110,7 +110,7 @@ public class NotPinball extends AppCompatActivity
 		sprites.add(new finishLine(gameLength, screenHeight / 20f));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.32f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.55f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
-		if(Level == 1)
+		if(totalScore == 0)
 			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.2f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
 		
 		for (int i = sprites.size() - 1; i >= 0; i--)
