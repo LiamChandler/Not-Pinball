@@ -63,8 +63,6 @@ public class NotPinball extends AppCompatActivity
 		screenHeight = displayMetrics.heightPixels + 200;
 		gameLength = screenHeight * 4;
 		screenWidth = displayMetrics.widthPixels;
-		radiusPlayer = (int)(screenWidth / 17.5);
-		radiusObstacle = screenWidth / 20;
 		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 10);
 		maxSpeed = screenHeight / 220;
 		
@@ -104,10 +102,22 @@ public class NotPinball extends AppCompatActivity
 		cameraPos = 0;
 		run = false;
 		
+		radiusPlayer = (int)(screenWidth / 17.5f);
+		radiusObstacle = screenWidth / 20;
+		for(int i = 1; i < Level; i+=10)
+		{
+			radiusPlayer --;
+			radiusObstacle --;
+		}
+		
 		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
-		generateObstacles(15 + Level);
+		
+		generateObstacles(15 + (Level/3));
+		Log.d("NPB","NumObstacles " + (15 + (Level/3)));
+		
 		sprites.add(new finishLine(gameLength, screenHeight / 20f));
+		
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.32f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.55f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
 		if(totalScore == 0)
