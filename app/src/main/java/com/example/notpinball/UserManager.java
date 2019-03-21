@@ -3,6 +3,7 @@ package com.example.notpinball;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 public class UserManager extends AppCompatActivity
 {
