@@ -78,9 +78,38 @@ public class UserManagement
 		return users.get(index).highScore;
 	}
 	
-	public void addUser(String Name, int Level, int HighScore)
+	public void addUser(String Name)
+	{
+		addUser(Name,1,0);
+	}
+	private void addUser(String Name, int Level, int HighScore)
 	{
 		users.add(new User(Name, Level, HighScore));
+	}
+
+	public int getSize()
+	{
+		return users.size();
+	}
+
+	public void updateLevel(int index, int newLevel)
+	{
+		users.get(index).updateLevel(newLevel);
+	}
+
+	public int getLevel(int index)
+	{
+		return users.get(index).level;
+	}
+
+	public void updateHighScore(int index, int newScore)
+	{
+		users.get(index).updateHighscore(newScore);
+	}
+
+	public int getScore(int index)
+	{
+		return users.get(index).highScore;
 	}
 	
 	public void print()
