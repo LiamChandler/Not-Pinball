@@ -21,10 +21,12 @@ public class UserManagement
 	public UserManagement(Context c)
 	{
 		context = c;
+		this.load();
 	}
 	
 	public void load()
 	{
+		users.clear();
 		try
 		{
 			File yourFile = context.getFileStreamPath("highscores.csv");
@@ -80,33 +82,46 @@ public class UserManagement
 	
 	public void addUser(String Name)
 	{
-		addUser(Name,1,0);
+		addUser(Name, 1, 0);
 	}
+	
 	private void addUser(String Name, int Level, int HighScore)
 	{
 		users.add(new User(Name, Level, HighScore));
 	}
-
+	
+	public void removeUser(int index)
+	{
+		users.remove(index);
+	}
+	
+	public void setAsCurrentUser(int index)
+	{
+		User tmp = users.get(0);
+		users.set(0,users.get(index));
+		users.set(index,tmp);
+	}
+	
 	public int getSize()
 	{
 		return users.size();
 	}
-
+	
 	public void updateLevel(int index, int newLevel)
 	{
 		users.get(index).updateLevel(newLevel);
 	}
-
+	
 	public int getLevel(int index)
 	{
 		return users.get(index).level;
 	}
-
+	
 	public void updateHighScore(int index, int newScore)
 	{
 		users.get(index).updateHighscore(newScore);
 	}
-
+	
 	public int getScore(int index)
 	{
 		return users.get(index).highScore;
@@ -116,7 +131,7 @@ public class UserManagement
 	{
 		for (int i = 0; i < users.size(); i++)
 		{
-			Log.d("NPB", i + "  Name: " + users.get(i).name + "       Level: " + users.get(i).level + "       HighScore: "  + users.get(i).highScore);
+			Log.d("NPB", i + "  Name: " + users.get(i).name + "       Level: " + users.get(i).level + "       HighScore: " + users.get(i).highScore);
 		}
 	}
 }

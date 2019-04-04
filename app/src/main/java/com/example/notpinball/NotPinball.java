@@ -37,6 +37,8 @@ public class NotPinball extends AppCompatActivity
 	private TextView healthDisplay, scoreDisplay;
 	private Timer winTimer = new Timer(), loseTimer = new Timer();
 	private Boolean winTimerBool = false, loseTimerBool = false, run;
+	UserManagement manager;
+	User currentUser;
 	
 	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
@@ -57,6 +59,7 @@ public class NotPinball extends AppCompatActivity
 		sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelerometer = sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		listener = new AccelerometerListener();
+		manager = new UserManagement(this);
 		
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -91,7 +94,7 @@ public class NotPinball extends AppCompatActivity
 		totalScore = 0;
 		lastTargetScore = 0;
 		playerHealth = playerMaxHealth;
-		Level = 1;
+		Level = manager.getLevel(0);
 		
 		create();
 	}
@@ -182,13 +185,17 @@ public class NotPinball extends AppCompatActivity
 	public void winRound()
 	{
 		totalScore += currScore;
+		manager.updateHighScore(0,totalScore);
 		Level++;
+		manager.updateLevel(0,Level);
 		create();
 	}
 	
 	public void loseRound()
 	{
 		playerHealth = playerMaxHealth;
+		totalScore += currScore;
+		manager.updateHighScore(0,totalScore);
 		totalScore = 0;
 		lastTargetScore = 0;
 		create();
@@ -308,6 +315,7 @@ public class NotPinball extends AppCompatActivity
 	protected void onPause()
 	{
 		super.onPause();
+		manager.save();
 		sensorMgr.unregisterListener(listener, accelerometer);
 		Log.d("NPB", "OnPause");
 	}
@@ -316,6 +324,7 @@ public class NotPinball extends AppCompatActivity
 	protected void onResume()
 	{
 		super.onResume();
+		manager.load();
 		create();
 		sensorMgr.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
 		Log.d("NPB", "OnResume");

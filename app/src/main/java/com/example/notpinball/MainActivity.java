@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
 {
+	TextView currentUser;
+	UserManagement manager;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -19,6 +22,18 @@ public class MainActivity extends AppCompatActivity
 		setContentView(R.layout.activity_main);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+		manager = new UserManagement(this);
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		manager.load();
+		
+		currentUser = findViewById(R.id.textCurrentUser);
+		currentUser.setText(("Current user: "+manager.getName(0)));
 	}
 	
 	public void gamePlay(View v)

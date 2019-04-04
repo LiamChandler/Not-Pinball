@@ -4,4 +4,6 @@
     <string name="gameUserSelect">Select or Create User</string>
     <string name="gameHighScores">View Highscores</string>
     <string name="buttonAdd">Add user</string>
+    <string name="buttonRemove">Remove user</string>
+    <string name="getName">What is your Name</string>
 </resources>
