@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,6 @@ public class NotPinball extends AppCompatActivity
 	private Timer winTimer = new Timer(), loseTimer = new Timer();
 	private Boolean winTimerBool = false, loseTimerBool = false, run;
 	UserManagement manager;
-	User currentUser;
 	
 	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level;
 	int radiusPlayer, radiusObstacle;
@@ -66,10 +66,10 @@ public class NotPinball extends AppCompatActivity
 		screenHeight = displayMetrics.heightPixels + 200;
 		gameLength = screenHeight * 4;
 		screenWidth = displayMetrics.widthPixels;
-		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 10);
+		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 11);
 		maxSpeed = screenHeight / 220;
-		
 		Log.d("NPB", "maxSpeed = " + maxSpeed);
+		
 		RelativeLayout layout = new RelativeLayout(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(screenWidth, screenHeight);
 		GraphicsView gv = new GraphicsView(this);
@@ -77,7 +77,7 @@ public class NotPinball extends AppCompatActivity
 		layout.addView(gv, params);
 		healthDisplay = new TextView(this);
 		healthDisplay.setTextColor(Color.WHITE);
-		healthDisplay.setX(screenWidth * 0.1f);
+		healthDisplay.setX(screenWidth * 0.05f);
 		healthDisplay.setY(5);
 		healthDisplay.setTextSize(textSize);
 		layout.addView(healthDisplay);
@@ -96,6 +96,11 @@ public class NotPinball extends AppCompatActivity
 		playerHealth = playerMaxHealth;
 		Level = manager.getLevel(0);
 		
+		if(Level == -1)
+		{
+			Toast.makeText(this,"Please select a user",Toast.LENGTH_LONG).show();
+			finish();
+		}
 		create();
 	}
 	
@@ -121,10 +126,11 @@ public class NotPinball extends AppCompatActivity
 		
 		sprites.add(new finishLine(gameLength, screenHeight / 20f));
 		
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.32f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.55f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255)));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.75f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
 		if(totalScore == 0)
-			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.2f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
+			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
 		
 		for (int i = sprites.size() - 1; i >= 0; i--)
 			sprites.get(i).update(sprites);

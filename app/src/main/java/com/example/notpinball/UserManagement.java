@@ -72,12 +72,18 @@ public class UserManagement
 	
 	public String getName(int index)
 	{
-		return users.get(index).name;
+		if (!users.isEmpty())
+			return users.get(index).name;
+		else
+			return null;
 	}
 	
 	public int getHighScore(int index)
 	{
-		return users.get(index).highScore;
+		if (!users.isEmpty())
+			return users.get(index).highScore;
+		else
+			return -1;
 	}
 	
 	public void addUser(String Name)
@@ -114,7 +120,10 @@ public class UserManagement
 	
 	public int getLevel(int index)
 	{
-		return users.get(index).level;
+		if (!users.isEmpty())
+			return users.get(index).level;
+		else
+			return -1;
 	}
 	
 	public void updateHighScore(int index, int newScore)

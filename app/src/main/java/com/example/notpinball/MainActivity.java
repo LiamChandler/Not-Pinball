@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity
 		manager.load();
 		
 		currentUser = findViewById(R.id.textCurrentUser);
-		currentUser.setText(("Current user: "+manager.getName(0)));
+		if(manager.getLevel(0) != -1)
+			currentUser.setText(("Current user: "+manager.getName(0)));
 	}
 	
 	public void gamePlay(View v)
