@@ -121,16 +121,16 @@ public class NotPinball extends AppCompatActivity
 		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
 		
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255)));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.68f, textSize * 13, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
+		if(totalScore == 0)
+			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
+		
 		generateObstacles(15 + (Level/3));
 		Log.d("NPB","NumObstacles " + (15 + (Level/3)));
 		
 		sprites.add(new finishLine(gameLength, screenHeight / 20f));
-		
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255)));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.75f, textSize * 20, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
-		if(totalScore == 0)
-			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
 		
 		for (int i = sprites.size() - 1; i >= 0; i--)
 			sprites.get(i).update(sprites);
@@ -202,6 +202,7 @@ public class NotPinball extends AppCompatActivity
 		playerHealth = playerMaxHealth;
 		totalScore += currScore;
 		manager.updateHighScore(0,totalScore);
+		manager.updateLevel(0,Level);
 		totalScore = 0;
 		lastTargetScore = 0;
 		create();

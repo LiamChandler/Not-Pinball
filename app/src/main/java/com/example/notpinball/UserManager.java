@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class UserManager extends AppCompatActivity
@@ -32,7 +31,7 @@ public class UserManager extends AppCompatActivity
 	
 	private void startView()
 	{
-		userSelect = findViewById(R.id.userSelectSubBox);
+		userSelect = findViewById(R.id.userHighscoreShowView);
 		userSelect.removeAllViews();
 		Button tmp;
 		int num = manager.getSize();

@@ -27,13 +27,12 @@ public abstract class npbObject
 	
 	public void update(List<npbObject> sprites)
 	{
-		if (((x + dX + radius) < NotPinball.screenWidth) && (x + dX - radius > 0))
-			x += dX;
-		else
-		{
-			dX = -dX;
-			x += dX;
-		}
+		x += dX;
+		
+		if(x < 0)
+			x=NotPinball.screenWidth;
+		else if (x>NotPinball.screenWidth)
+			x = 0;
 		
 		if (((y + dY + radius) < NotPinball.gameLength) || thisType == type.Player && (y + dY - radius > 0))
 			y += dY;

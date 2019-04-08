@@ -26,7 +26,18 @@ public class Player extends npbObject
 	{
 		Paint p1 = new Paint();
 		p1.setColor(Color.rgb(128, 64, 0));
-		canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
+		if(x<radius)
+		{
+			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
+			canvas.drawCircle(x+NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
+		}
+		else if (x>NotPinball.screenWidth-radius)
+		{
+			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
+			canvas.drawCircle(x-NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
+		}
+		else
+			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
 	}
 	
 	@Override

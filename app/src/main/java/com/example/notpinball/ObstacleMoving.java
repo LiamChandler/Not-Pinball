@@ -74,22 +74,6 @@ public class ObstacleMoving extends npbObject
 				}
 			}
 		}
-		
-		if (((x + dX + radius) < NotPinball.screenWidth) && (x + dX - radius > 0))
-			x += dX;
-		else
-		{
-			dX = -dX;
-			//dY = -dY;
-			x += dX;
-		}
-		
-		if (((y + dY + radius) < NotPinball.gameLength) && (y + dY - radius > 0))
-			y += dY;
-		else
-		{
-			dY = -dY;
-			y += dY;
-		}
+		super.update(sprites);
 	}
 }
