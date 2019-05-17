@@ -1,6 +1,7 @@
 package com.example.notpinball;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import android.content.Context;
@@ -119,18 +120,18 @@ public class NotPinball extends AppCompatActivity
 		}
 		
 		sprites = new ArrayList<>();
-		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer));
+		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer,this));
 		
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255)));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70));
-		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.68f, textSize * 13, Integer.toString(Level), Color.rgb(0, 0, 0), 70));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255),this));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70,this));
+		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.68f, textSize * 13, Integer.toString(Level), Color.rgb(0, 0, 0), 70,this));
 		if(totalScore == 0)
-			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0)));
+			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0),this));
 		
 		generateObstacles(15 + (Level/3));
 		Log.d("NPB","NumObstacles " + (15 + (Level/3)));
 		
-		sprites.add(new finishLine(gameLength, screenHeight / 20f));
+		sprites.add(new finishLine(gameLength, screenHeight / 20f,this));
 		
 		for (int i = sprites.size() - 1; i >= 0; i--)
 			sprites.get(i).update(sprites);
@@ -168,12 +169,12 @@ public class NotPinball extends AppCompatActivity
 		
 		int percent = (int) (gameLength - screenHeight * 0.3f) / solid;
 		for (int i = 0; i < solid; i++)
-			sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
+			sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 		
 		percent = (int) (gameLength - screenHeight * 0.3f) / moving;
 		for (int i = 0; i < moving; i++)
 		{
-			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle);
+			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this);
 			tmpO.setdX(((rand.nextFloat() * maxSpeed / 2f) - maxSpeed /4f) + 2.5f);
 			tmpO.setdY(((rand.nextFloat() * maxSpeed) / 8f) - (maxSpeed / 16f));
 			sprites.add(tmpO);
@@ -181,11 +182,11 @@ public class NotPinball extends AppCompatActivity
 		
 		percent = (int) (gameLength - screenHeight * 0.3f) / spike;
 		for (int i = 0; i < spike; i++)
-			sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
+			sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 		
 		percent = (int) (gameLength - screenHeight * 0.3f) / target;
 		for (int i = 0; i < target; i++)
-			sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle));
+			sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 	}
 	
 	public void winRound()

@@ -1,5 +1,6 @@
 package com.example.notpinball;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,17 +17,17 @@ public class textShow extends npbObject
 	
 	int alpha = 350;
 	
-	public textShow(float X,float Y, int TextSize,String Text, int Color)
+	public textShow(float X, float Y, int TextSize, String Text, int Color, Context context)
 	{
-		super(X, Y, TextSize * 2);
+		super(X, Y, TextSize * 2,context);
 		thisType = type.nonColliding;
 		text = Text;
 		color = Color;
 	}
 	
-	public textShow(float X,float Y, int TextSize,String Text, int Color, int Fade)
+	public textShow(float X,float Y, int TextSize,String Text, int Color, int Fade,Context context)
 	{
-		super(X, Y, TextSize * 2);
+		super(X, Y, TextSize * 2,context);
 		thisType = type.nonColliding;
 		text = Text;
 		color = Color;

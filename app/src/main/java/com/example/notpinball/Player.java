@@ -1,9 +1,9 @@
 package com.example.notpinball;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.List;
 import java.util.Timer;
@@ -15,9 +15,9 @@ public class Player extends npbObject
 	private boolean timerCoolDown = false;
 	private float scrollPos = 0.15f, scrollZone = 0.3f, playerMaxPos = 0;
 	
-	public Player(float X, float Y, int Radius)
+	public Player(float X, float Y, int Radius, Context context)
 	{
-		super(X, Y, Radius);
+		super(X, Y, Radius,context);
 		thisType = type.Player;
 	}
 	
@@ -78,12 +78,12 @@ public class Player extends npbObject
 					if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 					{
 						NotPinball.playerHealth--;
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-1", Color.rgb(180, 0, 0)));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-1", Color.rgb(180, 0, 0),context));
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleSpiked)
 					{
 						NotPinball.playerHealth -= 5;
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-5", Color.rgb(180, 0, 0)));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-5", Color.rgb(180, 0, 0),context));
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleTarget)
 					{
@@ -94,7 +94,7 @@ public class Player extends npbObject
 						if(NotPinball.playerHealth > NotPinball.playerMaxHealth)
 							NotPinball.playerHealth = NotPinball.playerMaxHealth;
 						
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0)));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0),context));
 						other.dead = true;
 					}
 					if (NotPinball.playerHealth <= 0)

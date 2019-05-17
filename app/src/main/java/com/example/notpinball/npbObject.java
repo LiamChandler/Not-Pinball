@@ -1,9 +1,8 @@
 package com.example.notpinball;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.util.Log;
-
 import java.util.List;
 
 public abstract class npbObject
@@ -12,14 +11,17 @@ public abstract class npbObject
 	protected int radius;
 	protected boolean dead = false, won = false, lose = false, dying = false;
 	protected type thisType;
+	protected Context context;
+	protected Bitmap image;
 	
 	public enum type
 	{
 		Player, ObstacleSolid, ObstacleMoving, ObstacleTarget, ObstacleSpiked, nonColliding
 	}
 	
-	public npbObject(float X, float Y, int Radius)
+	public npbObject(float X, float Y, int Radius,Context context)
 	{
+		this.context = context;
 		radius = Radius;
 		x = X;
 		y = Y;

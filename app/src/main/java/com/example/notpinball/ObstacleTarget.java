@@ -1,31 +1,24 @@
 package com.example.notpinball;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 
 public class ObstacleTarget extends npbObject
 {
-	private float spikeHeight = 8;
-	
-	public ObstacleTarget(float X, float Y, int Radius)
+	public ObstacleTarget(float X, float Y, int Radius, Context context)
 	{
-		super(X, Y, Radius);
+		super(X, Y, Radius, context);
 		thisType = type.ObstacleTarget;
+		image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.target_sprite),radius*2,radius*2,true);
 	}
 	
 	@Override
 	public void draw(Canvas canvas)
 	{
-		Paint p1 = new Paint(Paint.ANTI_ALIAS_FLAG);
-		p1.setColor(Color.rgb(255, 0, 0));
-		
-		canvas.drawCircle(x,y - NotPinball.cameraPos,radius,p1);
-		p1.setColor(Color.rgb(255, 255, 255));
-		canvas.drawCircle(x,y- NotPinball.cameraPos,radius*0.666f,p1);
-		p1.setColor(Color.rgb(255, 0, 0));
-		canvas.drawCircle(x,y- NotPinball.cameraPos,radius * 0.333f,p1);
+		Paint p1 = new Paint();
+		canvas.drawBitmap(image,(x-radius),(y - NotPinball.cameraPos-radius),p1);
 	}
 }
