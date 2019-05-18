@@ -3,26 +3,15 @@ package com.example.notpinball;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import java.util.List;
 
 public class ObstacleMoving extends npbObject
 {
-	private float spikeHeight = 8;
-	
 	public ObstacleMoving(float X, float Y, int Radius, Context context)
 	{
 		super(X, Y, Radius, context);
 		image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.moving_sprite),radius*2,radius*2,true);
 		thisType = type.ObstacleMoving;
-	}
-	
-	@Override
-	public void draw(Canvas canvas)
-	{
-		Paint p1 = new Paint();
-		canvas.drawBitmap(image,(x-radius),(y - NotPinball.cameraPos-radius),p1);
 	}
 	
 	@Override

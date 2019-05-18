@@ -41,7 +41,7 @@ public class NotPinball extends AppCompatActivity
 	private Boolean winTimerBool = false, loseTimerBool = false, run;
 	UserManagement manager;
 	
-	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level;
+	public static int screenWidth, screenHeight, gameLength, maxSpeed, playerHealth, currScore, totalScore, lastTargetScore, textSize, Level,playerStartY;
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos;
 	public static final int playerMaxHealth = 5;
@@ -66,6 +66,7 @@ public class NotPinball extends AppCompatActivity
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		screenHeight = displayMetrics.heightPixels + 200;
 		gameLength = screenHeight * 4;
+		playerStartY = 100;
 		screenWidth = displayMetrics.widthPixels;
 		textSize = (int) ((float) (screenHeight) / (float) (screenWidth) * 11);
 		maxSpeed = screenHeight / 220;
@@ -111,16 +112,15 @@ public class NotPinball extends AppCompatActivity
 		cameraPos = 0;
 		run = false;
 		
-		radiusPlayer = (int)(screenWidth / 17.5f);
-		radiusObstacle = screenWidth / 20;
-		for(int i = 1; i < Level; i+=10)
-		{
-			radiusPlayer --;
-			radiusObstacle --;
-		}
+		radiusPlayer = screenWidth / 15;
+		radiusObstacle = screenWidth / 18;
+		
+		int num = (int)(1000/(0.05*Level+20))-50;
+		radiusObstacle += num;
+		radiusPlayer +=num;
 		
 		sprites = new ArrayList<>();
-		sprites.add(new Player(screenWidth * 0.5f, 100, radiusPlayer,this));
+		sprites.add(new Player(screenWidth * 0.5f, playerStartY, radiusPlayer,this));
 		
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255),this));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70,this));
@@ -128,8 +128,7 @@ public class NotPinball extends AppCompatActivity
 		if(totalScore == 0)
 			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0),this));
 		
-		generateObstacles(15 + (Level/3));
-		Log.d("NPB","NumObstacles " + (15 + (Level/3)));
+		generateObstacles((int)(15*Math.pow(Level+4,.25)));
 		
 		sprites.add(new finishLine(gameLength, screenHeight / 20f,this));
 		
@@ -149,23 +148,11 @@ public class NotPinball extends AppCompatActivity
 	
 	private void generateObstacles(int number)
 	{
-		int solid = (int) (number * 0.5),
-				moving = (int) (number * 0.25),
+	//	Log.d("NPB","Generating " + number + " obstacles");
+		int 	moving = (int) (number * 0.25),
 				spike = (int) (number * 0.10),
 				target = (int) (number * 0.15);
-		boolean tmp = true;
-		while (tmp)
-		{
-			int total = solid + moving + spike + target;
-			if (total != number)
-			{
-				if (total < number)
-					solid++;
-				else
-					solid--;
-			} else
-				tmp = false;
-		}
+		int     solid = (int) (number * 0.5);
 		
 		int percent = (int) (gameLength - screenHeight * 0.3f) / solid;
 		for (int i = 0; i < solid; i++)
@@ -219,9 +206,7 @@ public class NotPinball extends AppCompatActivity
 		}
 		
 		@Override
-		public void onAccuracyChanged(Sensor sensor, int i)
-		{
-		}
+		public void onAccuracyChanged(Sensor sensor, int i){}
 	}
 	
 	public class GraphicsView extends View

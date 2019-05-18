@@ -3,6 +3,8 @@ package com.example.notpinball;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+
 import java.util.List;
 
 public abstract class npbObject
@@ -64,7 +66,20 @@ public abstract class npbObject
 		}
 	}
 	
-	public abstract void draw(Canvas canvas);
+	public void draw(Canvas canvas)
+	{
+		Paint p1 = new Paint();
+		if (x < radius)
+		{
+			canvas.drawBitmap(image, x - radius, y - NotPinball.cameraPos - radius, p1);
+			canvas.drawBitmap(image, x + NotPinball.screenWidth - radius, y - NotPinball.cameraPos - radius, p1);
+		} else if (x > NotPinball.screenWidth - radius)
+		{
+			canvas.drawBitmap(image, x - radius, y - NotPinball.cameraPos - radius, p1);
+			canvas.drawBitmap(image, x - NotPinball.screenWidth - radius, y - NotPinball.cameraPos - radius, p1);
+		} else
+			canvas.drawBitmap(image, (x - radius), (y - NotPinball.cameraPos - radius), p1);
+	}
 	
 	public float getX()
 	{

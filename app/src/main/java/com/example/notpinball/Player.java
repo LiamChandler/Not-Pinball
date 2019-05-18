@@ -45,13 +45,12 @@ public class Player extends npbObject
 	{
 		super.update(sprites);
 		
-		
 		if(y> NotPinball.gameLength)
 			won = true;
-		if(y>playerMaxPos && !won)
+		else if(y > playerMaxPos && !lose)
 		{
-			playerMaxPos = y;
-			NotPinball.currScore = (int) ((playerMaxPos / (NotPinball.screenHeight * 0.0399f)))* NotPinball.Level;
+			playerMaxPos = y - NotPinball.playerStartY;
+			NotPinball.currScore = (int) ((playerMaxPos / ((NotPinball.gameLength - NotPinball.playerStartY) / 100))) * NotPinball.Level;
 		}
 		if(dying && radius >=1)
 		{
@@ -73,7 +72,7 @@ public class Player extends npbObject
 			
 			if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding)
 			{
-				if (!timerCoolDown)
+				if (!timerCoolDown && !lose)
 				{
 					if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 					{
