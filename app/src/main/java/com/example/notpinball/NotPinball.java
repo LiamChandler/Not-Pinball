@@ -148,32 +148,31 @@ public class NotPinball extends AppCompatActivity
 	
 	private void generateObstacles(int number)
 	{
-	//	Log.d("NPB","Generating " + number + " obstacles");
 		int 	moving = (int) (number * 0.25),
 				spike = (int) (number * 0.10),
 				target = (int) (number * 0.15);
-		int     solid = (int) (number * 0.5);
+		int     solid = number-(moving+spike+target);
 		
-		int percent = (int) (gameLength - screenHeight * 0.3f) / solid;
+		int percent = (int) (gameLength - screenHeight * 0.4f) / solid;
 		for (int i = 0; i < solid; i++)
-			sprites.add(new ObstacleSolid(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
+			sprites.add(new ObstacleSolid(rand.nextInt(screenWidth), rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 		
-		percent = (int) (gameLength - screenHeight * 0.3f) / moving;
+		percent = (int) (gameLength - screenHeight * 0.4f) / moving;
 		for (int i = 0; i < moving; i++)
 		{
-			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this);
+			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this);
 			tmpO.setdX(((rand.nextFloat() * maxSpeed / 2f) - maxSpeed /4f) + 2.5f);
 			tmpO.setdY(((rand.nextFloat() * maxSpeed) / 8f) - (maxSpeed / 16f));
 			sprites.add(tmpO);
 		}
 		
-		percent = (int) (gameLength - screenHeight * 0.3f) / spike;
+		percent = (int) (gameLength - screenHeight * 0.4f) / spike;
 		for (int i = 0; i < spike; i++)
-			sprites.add(new ObstacleSpike(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
+			sprites.add(new ObstacleSpike(rand.nextInt(screenWidth) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 		
-		percent = (int) (gameLength - screenHeight * 0.3f) / target;
+		percent = (int) (gameLength - screenHeight * 0.4f) / target;
 		for (int i = 0; i < target; i++)
-			sprites.add(new ObstacleTarget(rand.nextInt(screenWidth - (radiusObstacle * 2)) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
+			sprites.add(new ObstacleTarget(rand.nextInt(screenWidth) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this));
 	}
 	
 	public void winRound()

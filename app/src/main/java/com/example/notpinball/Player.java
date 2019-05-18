@@ -17,7 +17,7 @@ public class Player extends npbObject
 	
 	public Player(float X, float Y, int Radius, Context context)
 	{
-		super(X, Y, Radius,context);
+		super(X, Y, Radius, context);
 		thisType = type.Player;
 	}
 	
@@ -26,17 +26,15 @@ public class Player extends npbObject
 	{
 		Paint p1 = new Paint();
 		p1.setColor(Color.rgb(128, 64, 0));
-		if(x<radius)
+		if (x < radius)
 		{
 			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
-			canvas.drawCircle(x+NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
-		}
-		else if (x>NotPinball.screenWidth-radius)
+			canvas.drawCircle(x + NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
+		} else if (x > NotPinball.screenWidth - radius)
 		{
 			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
-			canvas.drawCircle(x-NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
-		}
-		else
+			canvas.drawCircle(x - NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
+		} else
 			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
 	}
 	
@@ -45,20 +43,22 @@ public class Player extends npbObject
 	{
 		super.update(sprites);
 		
-		if(y> NotPinball.gameLength)
+		if (y > NotPinball.gameLength && !lose)
 			won = true;
-		else if(y > playerMaxPos && !lose)
+		else if (y > playerMaxPos && !lose)
 		{
 			playerMaxPos = y - NotPinball.playerStartY;
 			NotPinball.currScore = (int) ((playerMaxPos / ((NotPinball.gameLength - NotPinball.playerStartY) / 100))) * NotPinball.Level;
 		}
-		if(dying && radius >=1)
+		if (dying && radius >= 1)
 		{
 			radius--;
 		}
 		
 		if (dY < NotPinball.maxSpeed)
 			dY += 0.3;
+		else
+			dY = NotPinball.maxSpeed;
 		
 		if (dX > 0.05)
 			dX -= 0.05;
@@ -77,29 +77,30 @@ public class Player extends npbObject
 					if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 					{
 						NotPinball.playerHealth--;
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-1", Color.rgb(180, 0, 0),context));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleSpiked)
 					{
 						NotPinball.playerHealth -= 5;
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-5", Color.rgb(180, 0, 0),context));
+						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(180, 0, 0), context));
 						bounceOffRound(other, dist);
 					} else if (other.thisType == type.ObstacleTarget)
 					{
 						NotPinball.lastTargetScore += NotPinball.Level;
 						NotPinball.totalScore += NotPinball.lastTargetScore;
 						
-						NotPinball.playerHealth ++;
-						if(NotPinball.playerHealth > NotPinball.playerMaxHealth)
+						NotPinball.playerHealth++;
+						if (NotPinball.playerHealth > NotPinball.playerMaxHealth)
 							NotPinball.playerHealth = NotPinball.playerMaxHealth;
 						
-						sprites.add(new textShow(x, y, NotPinball.textSize * 2, "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0),context));
+						sprites.add(new textShow(x, y - (NotPinball.textSize * 3), (int) (NotPinball.textSize * 1.5f), "+❤", Color.rgb(0, 200, 0), context));
+						sprites.add(new textShow(x, y, (int) (NotPinball.textSize * 1.5f), "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0), context));
 						other.dead = true;
 					}
 					if (NotPinball.playerHealth <= 0)
 					{
 						lose = true;
-						NotPinball.playerHealth=0;
+						NotPinball.playerHealth = 0;
 					}
 					timerCoolDown = true;
 					timer.schedule(new shortCoolDown(), (long) 150);
@@ -115,7 +116,6 @@ public class Player extends npbObject
 		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone) && NotPinball.cameraPos < NotPinball.gameLength - (NotPinball.screenHeight * (scrollPos + scrollZone)))
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
 	}
-	
 	private void bounceOffRound(npbObject other, float dist)
 	{
 		float nX = (other.getX() - x) / dist, nY = (other.getY() - y) / dist;
