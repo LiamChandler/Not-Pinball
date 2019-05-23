@@ -12,19 +12,20 @@ import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class UserManagement
+class UserManagement
 {
 	private Context context;
 	
 	private List<User> users = new LinkedList<>();
 	
-	public UserManagement(Context c)
+	UserManagement(Context c)
 	{
 		context = c;
 		this.load();
+		this.print();
 	}
 	
-	public void load()
+	void load()
 	{
 		users.clear();
 		try
@@ -35,11 +36,14 @@ public class UserManagement
 				Log.d("COMPX202", "File found");
 				BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(yourFile)));
 				String line;
-				
+				User tmp;
 				while ((line = in.readLine()) != null)
 				{
 					String[] row = line.split(",");
-					addUser(row[0], Integer.valueOf(row[1]), Integer.valueOf(row[2]));
+					tmp = new User(row[0], Integer.valueOf(row[1]));
+					for (int i = 2; i < row.length;i++)
+						tmp.addScore(Integer.valueOf(row[i]));
+					users.add(tmp);
 				}
 			} else
 			{
@@ -51,7 +55,7 @@ public class UserManagement
 		}
 	}
 	
-	public void save()
+	void save()
 	{
 		try
 		{
@@ -68,9 +72,10 @@ public class UserManagement
 		{
 			e.printStackTrace();
 		}
+		this.print();
 	}
 	
-	public String getName(int index)
+	String getName(int index)
 	{
 		if (!users.isEmpty())
 			return users.get(index).name;
@@ -78,47 +83,50 @@ public class UserManagement
 			return null;
 	}
 	
-	public int getHighScore(int index)
+	int getHighScore(int index)
 	{
 		if (!users.isEmpty())
-			return users.get(index).highScore;
+			if(users.get(index).highScore.isEmpty())
+				return 0;
+			else
+				return users.get(index).highScore.get(0);
 		else
 			return -1;
 	}
 	
-	public void addUser(String Name)
+	void addUser(String Name)
 	{
-		addUser(Name, 1, 0);
+		addUser(Name, 1);
 	}
 	
-	private void addUser(String Name, int Level, int HighScore)
+	private void addUser(String Name, int Level)
 	{
-		users.add(new User(Name, Level, HighScore));
+		users.add(new User(Name, Level));
 	}
 	
-	public void removeUser(int index)
+	void removeUser(int index)
 	{
 		users.remove(index);
 	}
 	
-	public void setAsCurrentUser(int index)
+	void setAsCurrentUser(int index)
 	{
 		User tmp = users.get(0);
 		users.set(0,users.get(index));
 		users.set(index,tmp);
 	}
 	
-	public int getSize()
+	int getSize()
 	{
 		return users.size();
 	}
 	
-	public void updateLevel(int index, int newLevel)
+	void updateLevel(int index, int newLevel)
 	{
 		users.get(index).updateLevel(newLevel);
 	}
 	
-	public int getLevel(int index)
+	int getLevel(int index)
 	{
 		if (!users.isEmpty())
 			return users.get(index).level;
@@ -126,21 +134,24 @@ public class UserManagement
 			return -1;
 	}
 	
-	public void updateHighScore(int index, int newScore)
+	void updateHighScore(int index, int newScore)
 	{
-		users.get(index).updateHighscore(newScore);
+		users.get(index).addScore(newScore);
 	}
 	
-	public int getScore(int index)
+	int getScore(int index)
 	{
-		return users.get(index).highScore;
+		if(users.get(index).highScore.isEmpty())
+			return 0;
+		else
+			return users.get(index).highScore.get(0);
 	}
 	
-	public void print()
+	void print()
 	{
 		for (int i = 0; i < users.size(); i++)
 		{
-			Log.d("NPB", i + "  Name: " + users.get(i).name + "       Level: " + users.get(i).level + "       HighScore: " + users.get(i).highScore);
+			Log.d("NPB", i + " "+users.get(i).print());
 		}
 	}
 }

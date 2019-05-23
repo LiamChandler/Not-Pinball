@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity
 			currentUser.setText(("Current user: "+manager.getName(0)));
 	}
 	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		manager.save();
+	}
+	
 	public void gamePlay(View v)
 	{
 		Log.d("NPB", "gamePlay");

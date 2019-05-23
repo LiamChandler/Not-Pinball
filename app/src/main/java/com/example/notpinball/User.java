@@ -1,15 +1,19 @@
 package com.example.notpinball;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 public class User
 {
 	public String name;
-	public int level, highScore;
+	int level;
+	List<Integer> highScore = new LinkedList<>();
 	
-	User(String Name, int Level, int HighScore)
+	User(String Name, int Level)
 	{
 		name = Name;
 		level = Level;
-		highScore = HighScore;
 	}
 	
 	public void updateLevel(int newLevel)
@@ -17,14 +21,17 @@ public class User
 		level = newLevel;
 	}
 	
-	public void updateHighscore(int newScore)
+	public void addScore(int newScore)
 	{
-		if(newScore > highScore)
-			highScore = newScore;
+		highScore.add(newScore);
+		Collections.sort(highScore);
 	}
 	
 	public String print()
 	{
-		return (name + "," + level + "," + highScore + "\n");
+		StringBuilder b = new StringBuilder(name + "," + level);
+		for(int i :highScore)
+			b.append(","+i);
+		return b.toString();
 	}
 }
