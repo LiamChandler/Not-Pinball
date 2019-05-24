@@ -91,18 +91,21 @@ public class NotPinball extends AppCompatActivity
 		layout.setBackgroundColor(Color.BLACK);
 		setContentView(layout);
 		
-		currScore = 0;
-		lastTargetScore = 0;
-		playerHealth = manager.getCurrentHealth(0);
-		totalScore = manager.getCurrentScore(0);
 		Level = manager.getLevel(0);
-		
 		if(Level == -1)
 		{
 			Toast.makeText(this,"Please select a user",Toast.LENGTH_LONG).show();
 			finish();
 		}
-		create();
+		else
+		{
+			currScore = 0;
+			lastTargetScore = 0;
+			playerHealth = manager.getCurrentHealth(0);
+			totalScore = manager.getCurrentScore(0);
+			
+			create();
+		}
 	}
 	
 	private void create()
@@ -197,11 +200,17 @@ public class NotPinball extends AppCompatActivity
 	
 	class AccelerometerListener implements SensorEventListener
 	{
+		float tmp;
 		@Override
 		public void onSensorChanged(SensorEvent sensorEvent)
 		{
+			tmp = -sensorEvent.values[0]/4;
+			if(tmp <-5)
+				tmp = -5;
+			else if(tmp > 5)
+				tmp = 5;
 			if(!sprites.isEmpty() && run)
-				sprites.get(0).moddX(-sensorEvent.values[0] / 5);
+				sprites.get(0).moddX(tmp);
 		}
 		
 		@Override

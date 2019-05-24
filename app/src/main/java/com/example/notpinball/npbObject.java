@@ -4,12 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 
 import java.util.List;
 
 public abstract class npbObject
 {
-	float x, y, dX, dY, accdX, accdY;
+	PointF P = new PointF(), P2, dP = new PointF(), ddP = new PointF();
 	int radius;
 	boolean dead = false, won = false, lose = false, dying = false;
 	type thisType;
@@ -25,105 +26,102 @@ public abstract class npbObject
 	{
 		this.context = context;
 		radius = Radius;
-		x = X;
-		y = Y;
+		P.set(X,Y);
 	}
 	
 	public void update(List<npbObject> sprites)
 	{
-		x += dX;
+		P.x += dP.x;
 		
-		if (x < 0)
-			x = NotPinball.screenWidth;
-		else if (x > NotPinball.screenWidth)
-			x = 0;
+		if (P.x < 0)
+			P.x = NotPinball.screenWidth;
+		else if (P.x > NotPinball.screenWidth)
+			P.x = 0;
 		
-		if (((y + dY + radius) < NotPinball.gameLength) || thisType == type.Player && (y + dY - radius > 0))
-			y += dY;
+		if (((P.y + dP.y + radius) < NotPinball.gameLength) || thisType == type.Player && (P.y + dP.y - radius > 0))
+			P.y += dP.y;
 		else
 		{
-			dY = -dY;
-			y += dY;
+			dP.y = -dP.y;
+			P.y += dP.y;
 		}
 		
-		if (x + radius < 0)
-			x++;
-		else if (x - radius > NotPinball.screenWidth)
-			x--;
+		if (P.x + radius < 0)
+			P.x++;
+		else if (P.x - radius > NotPinball.screenWidth)
+			P.x--;
 		
 		
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if (Math.abs(y - other.getY()) < (radius * 4))
+			if (Math.abs(P.y - other.getY()) < (radius * 4))
 			{
-				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
+				float dist = (float) Math.hypot(Math.abs(P.x - other.getX()), Math.abs(P.y - other.getY()));
 				
 				if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
 				{
 					float fOverlap = dist - radius - other.radius;
-					x -= (fOverlap * (x - other.x) / dist) * 0.8f;
-					y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+					P.x -= (fOverlap * (P.x - other.P.x) / dist) * 0.8f;
+					P.y -= (fOverlap * (P.y - other.P.y) / dist) * 0.8f;
 				}
 			}
 		}
+		
+		if (P.x < radius)
+			P2 = new PointF(P.x + NotPinball.screenWidth, P.y);
+		else if (P.x > NotPinball.screenWidth - radius)
+			P2 = new PointF(P.x - NotPinball.screenWidth, P.y);
+		else
+			P2 = null;
 	}
 	
 	public void draw(Canvas canvas)
 	{
 		Paint p1 = new Paint();
-		if (x < radius)
-		{
-			canvas.drawBitmap(image, x - radius, y - NotPinball.cameraPos - radius, p1);
-			canvas.drawBitmap(image, x + NotPinball.screenWidth - radius, y - NotPinball.cameraPos - radius, p1);
-		} else if (x > NotPinball.screenWidth - radius)
-		{
-			canvas.drawBitmap(image, x - radius, y - NotPinball.cameraPos - radius, p1);
-			canvas.drawBitmap(image, x - NotPinball.screenWidth - radius, y - NotPinball.cameraPos - radius, p1);
-		} else
-			canvas.drawBitmap(image, (x - radius), (y - NotPinball.cameraPos - radius), p1);
+		canvas.drawBitmap(image, (P.x - radius), (P.y - NotPinball.cameraPos - radius), p1);
+		if(P2 != null)
+			canvas.drawBitmap(image, (P2.x - radius), (P2.y - NotPinball.cameraPos - radius), p1);
 	}
 	
 	public float getX()
 	{
-		return x;
+		return P.x;
 	}
 	
 	public float getY()
 	{
-		return y;
+		return P.y;
 	}
 	
 	public void setdX(float DX)
 	{
-		dX = DX;
+		dP.x = DX;
 	}
 	
 	public void setdY(float DY)
 	{
-		dY = DY;
+		dP.y = DY;
 	}
 	
 	public float getdX()
 	{
-		return dX;
+		return dP.x;
 	}
 	
 	public float getdY()
 	{
-		return dY;
+		return dP.y;
 	}
 	
 	public void moddX(float modDX)
 	{
-		if (x >= 0 && x <= NotPinball.screenWidth)
-			if (Math.abs(dX + modDX) < NotPinball.maxSpeed)
-				dX += modDX;
+		ddP.x += modDX;
 	}
 	
 	public void moddY(float accDY)
 	{
-		accdY = accDY;
+		ddP.y = accDY;
 	}
 	
 	public int getRadius()
@@ -133,7 +131,7 @@ public abstract class npbObject
 	
 	boolean onScreen()
 	{
-		return (y > (NotPinball.cameraPos - NotPinball.screenHeight * 0.1f) && y < (NotPinball.cameraPos + NotPinball.screenHeight * 1.1f));
+		return (P.y > (NotPinball.cameraPos - NotPinball.screenHeight * 0.1f) && P.y < (NotPinball.cameraPos + NotPinball.screenHeight * 1.1f));
 	}
 }
 

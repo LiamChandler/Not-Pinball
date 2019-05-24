@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Timer;
@@ -26,16 +27,10 @@ public class Player extends npbObject
 	{
 		Paint p1 = new Paint();
 		p1.setColor(Color.rgb(128, 64, 0));
-		if (x < radius)
-		{
-			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
-			canvas.drawCircle(x + NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
-		} else if (x > NotPinball.screenWidth - radius)
-		{
-			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
-			canvas.drawCircle(x - NotPinball.screenWidth, y - NotPinball.cameraPos, radius, p1);
-		} else
-			canvas.drawCircle(x, y - NotPinball.cameraPos, radius, p1);
+		
+		canvas.drawCircle(P.x, P.y - NotPinball.cameraPos, radius, p1);
+		if(P2 != null)
+			canvas.drawCircle(P2.x, P2.y - NotPinball.cameraPos, radius, p1);
 	}
 	
 	@Override
@@ -43,48 +38,53 @@ public class Player extends npbObject
 	{
 		super.update(sprites);
 		
-		if (y > NotPinball.gameLength && !lose)
+		if (P.y > NotPinball.gameLength && !lose)
 			won = true;
-		else if (y > playerMaxPos && !lose)
+		else if (P.y > playerMaxPos && !lose)
 		{
-			playerMaxPos = y - NotPinball.playerStartY;
+			playerMaxPos = P.y - NotPinball.playerStartY;
 			NotPinball.currScore = (int) ((playerMaxPos / ((NotPinball.gameLength - NotPinball.playerStartY) / 100))) * NotPinball.Level;
 		}
 		if (dying && radius >= 1)
-		{
 			radius--;
-		}
 		
-		if (dY < NotPinball.maxSpeed)
-			dY += 0.3;
+		if (dP.y < NotPinball.maxSpeed)
+			dP.y += 0.3;
 		else
-			dY = NotPinball.maxSpeed;
+			dP.y = NotPinball.maxSpeed;
 		
-		if (dX > 0.05)
-			dX -= 0.05;
-		else if (dX < -0.05)
-			dX += 0.05;
+		if (ddP.x > NotPinball.maxSpeed)
+			ddP.x = NotPinball.maxSpeed;
+		else if (ddP.x < -NotPinball.maxSpeed)
+			ddP.x = -NotPinball.maxSpeed;
 		
+		if (dP.x > 0.05)
+			dP.x -= 0.05;
+		else if (dP.x < -0.05)
+			dP.x += 0.05;
+		
+		
+		float dist;
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if(Math.abs(y - other.getY()) < (radius*4))
+			if(Math.abs(P.y - other.getY()) < (radius*4))
 			{
-				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
+				dist = (float) Math.hypot(Math.abs(P.x - other.getX()), Math.abs(P.y - other.getY()));
 				
-				if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding)
+				if (dist <= radius + other.getRadius() && other.thisType != type.nonColliding)
 				{
 					if (!timerCoolDown && !lose)
 					{
 						if (other.thisType == type.ObstacleSolid || other.thisType == type.ObstacleMoving)
 						{
 							NotPinball.playerHealth--;
-							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
+							sprites.add(new textShow(P.x, P.y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
 							bounceOffRound(other, dist);
 						} else if (other.thisType == type.ObstacleSpiked)
 						{
-							NotPinball.playerHealth -= 5;
-							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(180, 0, 0), context));
+							NotPinball.playerHealth = 0;
+							sprites.add(new textShow(P.x, P.y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
 							bounceOffRound(other, dist);
 						} else if (other.thisType == type.ObstacleTarget)
 						{
@@ -95,8 +95,8 @@ public class Player extends npbObject
 							if (NotPinball.playerHealth > NotPinball.playerMaxHealth)
 								NotPinball.playerHealth = NotPinball.playerMaxHealth;
 							
-							sprites.add(new textShow(x, y - (NotPinball.textSize * 3), (int) (NotPinball.textSize * 1.5f), "+❤", Color.rgb(0, 200, 0), context));
-							sprites.add(new textShow(x, y, (int) (NotPinball.textSize * 1.5f), "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0), context));
+							sprites.add(new textShow(P.x, P.y - (NotPinball.textSize * 3), (int) (NotPinball.textSize * 1.5f), "+❤", Color.rgb(0, 200, 0), context));
+							sprites.add(new textShow(P.x, P.y, (int) (NotPinball.textSize * 1.5f), "+" + NotPinball.lastTargetScore, Color.rgb(0, 200, 0), context));
 							other.dead = true;
 						}
 						if (NotPinball.playerHealth <= 0)
@@ -111,23 +111,22 @@ public class Player extends npbObject
 			}
 		}
 		
-		x += accdX;
-		y += accdY;
+		P.offset(ddP.x,ddP.y);
 		
-		if (y - NotPinball.cameraPos < NotPinball.screenHeight * scrollPos && NotPinball.cameraPos > 0)
-			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * scrollPos;
-		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone) && NotPinball.cameraPos < NotPinball.gameLength - (NotPinball.screenHeight * (scrollPos + scrollZone)))
-			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
+		if (P.y - NotPinball.cameraPos < NotPinball.screenHeight * scrollPos && NotPinball.cameraPos > 0)
+			NotPinball.cameraPos += P.y - NotPinball.cameraPos - NotPinball.screenHeight * scrollPos;
+		else if (P.y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone) && NotPinball.cameraPos < NotPinball.gameLength - (NotPinball.screenHeight * (scrollPos + scrollZone)))
+			NotPinball.cameraPos += P.y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
 	}
 	
 	private void bounceOffRound(npbObject other, float dist)
 	{
-		float nX = (other.getX() - x) / dist, nY = (other.getY() - y) / dist;
+		float nX = (other.getX() - P.x) / dist, nY = (other.getY() - P.y) / dist;
 		float tX = -nY, tY = nX;
-		float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
+		float dpTan = dP.x * tX + dP.y * tY, dpNorm = dP.x * nX + dP.y * nY;
 		
-		dX = tX * dpTan + nX * -dpNorm;
-		dY = tY * dpTan + nY * -dpNorm;
+		dP.x = tX * dpTan + nX * -dpNorm;
+		dP.x = tY * dpTan + nY * -dpNorm;
 	}
 	
 	class shortCoolDown extends TimerTask

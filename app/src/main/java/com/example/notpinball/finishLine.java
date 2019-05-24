@@ -23,12 +23,12 @@ public class finishLine extends npbObject
 		int numChecks = 20;
 		int spacing = NotPinball.screenWidth / numChecks;
 		
-		canvas.drawRect(0, y - NotPinball.cameraPos, NotPinball.screenWidth, y - NotPinball.cameraPos + height, p);
+		canvas.drawRect(0, P.y - NotPinball.cameraPos, NotPinball.screenWidth, P.y - NotPinball.cameraPos + height, p);
 		
 		p.setARGB(255, 0, 0, 0);
 		for (int i = 0; i < 20; i++)
 		{
-			float tmpY = y - NotPinball.cameraPos;
+			float tmpY = P.y - NotPinball.cameraPos;
 			if (i % 2 == 0)
 				tmpY += height / 2f;
 			

@@ -49,7 +49,7 @@ public class textShow extends npbObject
 		p.setAlpha(tmpAlpha);
 		p.setTextSize(radius);
 		p.setTextAlign(Paint.Align.CENTER);
-		canvas.drawText(text, x, y - NotPinball.cameraPos, p);
+		canvas.drawText(text, P.x, P.y - NotPinball.cameraPos, p);
 	}
 	
 	@Override
