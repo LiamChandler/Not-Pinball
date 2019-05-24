@@ -92,9 +92,9 @@ public class NotPinball extends AppCompatActivity
 		setContentView(layout);
 		
 		currScore = 0;
-		totalScore = 0;
 		lastTargetScore = 0;
-		playerHealth = playerMaxHealth;
+		playerHealth = manager.getCurrentHealth(0);
+		totalScore = manager.getCurrentScore(0);
 		Level = manager.getLevel(0);
 		
 		if(Level == -1)
@@ -177,7 +177,8 @@ public class NotPinball extends AppCompatActivity
 	public void winRound()
 	{
 		totalScore += currScore;
-		manager.addScore(0,totalScore);
+		manager.setCurrentScore(0,totalScore,playerHealth);
+		manager.save();
 		Level++;
 		manager.updateLevel(0,Level);
 		create();
@@ -189,7 +190,6 @@ public class NotPinball extends AppCompatActivity
 		totalScore += currScore;
 		manager.addScore(0,totalScore);
 		manager.updateLevel(0,Level);
-		manager.save();
 		totalScore = 0;
 		lastTargetScore = 0;
 		create();
@@ -220,43 +220,40 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		protected void onDraw(Canvas canvas)
 		{
-			if (!sprites.isEmpty())
+			try
 			{
-				if (!winTimerBool && sprites.get(0).won)
+				if (!sprites.isEmpty())
 				{
-					winTimer.schedule(new winTimerTask(), (long) 1250);
-					winTimerBool = true;
-				} else if (!loseTimerBool && sprites.get(0).lose)
-				{
-					loseTimer.schedule(new loseTimerTask(), (long) 1500);
-					sprites.get(0).dying = true;
-					loseTimerBool = true;
-				}
-				else
-				{
-					for (int i = sprites.size() - 1; i >= 0; i--)
+					if (!winTimerBool && sprites.get(0).won)
 					{
-						try
+						winTimer.schedule(new winTimerTask(), (long) 1250);
+						winTimerBool = true;
+					} else if (!loseTimerBool && sprites.get(0).lose)
+					{
+						loseTimer.schedule(new loseTimerTask(), (long) 1500);
+						sprites.get(0).dying = true;
+						loseTimerBool = true;
+					} else
+					{
+						for (int i = sprites.size() - 1; i >= 0; i--)
 						{
-							if (!sprites.isEmpty())
+							if(sprites.get(i).onScreen())
 							{
-								sprites.get(i).draw(canvas);
 								if (sprites.get(i).dead)
 									tmp.add(sprites.get(i));
 								if (run)
 									sprites.get(i).update(sprites);
+								sprites.get(i).draw(canvas);
 								showLivesScore();
-							} else
-								break;
+							}
 						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
+						for (npbObject n : tmp)
+							sprites.remove(n);
 					}
-					for (npbObject n : tmp)
-						sprites.remove(n);
 				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 			invalidate();
 		}
@@ -313,19 +310,31 @@ public class NotPinball extends AppCompatActivity
 	protected void onPause()
 	{
 		super.onPause();
-		manager.save();
 		sensorMgr.unregisterListener(listener, accelerometer);
-		Log.d("NPB", "OnPause");
+		Log.d("NPB", "NotPinball-Pause");
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		if(run)
+		{
+			totalScore += currScore;
+			manager.addScore(0, totalScore);
+		}
+		manager.updateLevel(0, Level);
+		manager.save();
+		Log.d("NPB", "NotPinball-Stop");
 	}
 	
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		manager.load();
 		create();
 		sensorMgr.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-		Log.d("NPB", "OnResume");
+		Log.d("NPB", "NotPinball-Resume");
 	}
 	
 	class winTimerTask extends TimerTask

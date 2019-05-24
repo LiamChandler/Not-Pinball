@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity
 	protected void onResume()
 	{
 		super.onResume();
-		manager.load();
 		
 		currentUser = findViewById(R.id.textCurrentUser);
 		if(manager.getLevel(0) != -1)
@@ -41,7 +40,6 @@ public class MainActivity extends AppCompatActivity
 	protected void onPause()
 	{
 		super.onPause();
-		manager.save();
 	}
 	
 	public void gamePlay(View v)

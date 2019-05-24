@@ -27,13 +27,13 @@ class UserManagement
 	
 	void load()
 	{
+		Log.d("NPB", "Load file");
 		users.clear();
 		try
 		{
 			File yourFile = context.getFileStreamPath("highscores.csv");
 			if (yourFile.exists())
 			{
-				Log.d("COMPX202", "File found");
 				BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(yourFile)));
 				String line;
 				User tmp;
@@ -41,13 +41,14 @@ class UserManagement
 				{
 					String[] row = line.split(",");
 					tmp = new User(row[0], Integer.valueOf(row[1]));
-					for (int i = 2; i < row.length;i++)
+					for (int i = 4; i < row.length;i++)
 						tmp.addScore(Integer.valueOf(row[i]));
+					tmp.setCurrentScore(Integer.valueOf(row[2]),Integer.valueOf(row[3]));
 					users.add(tmp);
 				}
 			} else
 			{
-				Log.d("COMPX202", "File not found");
+				Log.d("NPB", "File not found");
 			}
 		} catch (Exception e)
 		{
@@ -57,6 +58,7 @@ class UserManagement
 	
 	void save()
 	{
+		Log.d("NPB", "Save file");
 		try
 		{
 			File saveFile = new File(context.getFilesDir(), "highscores.csv");
@@ -81,17 +83,6 @@ class UserManagement
 			return users.get(index).name;
 		else
 			return null;
-	}
-	
-	int getHighScore(int index)
-	{
-		if (!users.isEmpty())
-			if(users.get(index).highScore.isEmpty())
-				return 0;
-			else
-				return users.get(index).highScore.get(0);
-		else
-			return -1;
 	}
 	
 	void addUser(String Name)
@@ -134,12 +125,23 @@ class UserManagement
 			return -1;
 	}
 	
+	int getHighScore(int index)
+	{
+		if (!users.isEmpty())
+			if(users.get(index).highScore.isEmpty())
+				return 0;
+			else
+				return users.get(index).highScore.get(0);
+		else
+			return -1;
+	}
+	
 	void addScore(int index, int newScore)
 	{
 		users.get(index).addScore(newScore);
 	}
 	
-	int getScore(int index)
+	int getHighscore(int index)
 	{
 		if(users.get(index).highScore.isEmpty())
 			return 0;
@@ -147,11 +149,51 @@ class UserManagement
 			return users.get(index).highScore.get(0);
 	}
 	
+	int getAveScore(int index)
+	{
+		if(users.get(index).highScore.isEmpty() && users.get(index).getCurrentScore() == 0)
+			return 0;
+		else
+		{
+			int tmp = 0,count = 0;
+			if(users.get(index).getCurrentScore() != 0)
+			{
+				tmp =users.get(index).getCurrentScore();
+				count++;
+			}
+			for(int i = 0; i<users.get(index).highScore.size();i++)
+			{
+				tmp += users.get(index).highScore.get(i);
+				count++;
+			}
+			return (tmp/count);
+		}
+	}
+	
+	int getCurrentScore(int index)
+	{
+		return users.get(index).getCurrentScore();
+	}
+	
+	int getCurrentHealth(int index)
+	{
+		return users.get(index).getCurrentHealth();
+	}
+	
+	void setCurrentScore(int index, int Score, int Health)
+	{
+		users.get(index).setCurrentScore(Score,Health);
+	}
+	void addCurrentScore(int index)
+	{
+		users.get(index).addCurrentScore();
+	}
+	
 	void print()
 	{
 		for (int i = 0; i < users.size(); i++)
 		{
-			Log.d("NPB", i + " "+users.get(i).print());
+			Log.d("NPB", i + " "+users.get(i).print() + " Average Score: " + this.getAveScore(i));
 		}
 	}
 }

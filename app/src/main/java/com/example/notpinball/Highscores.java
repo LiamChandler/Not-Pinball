@@ -61,7 +61,7 @@ public class Highscores extends AppCompatActivity
 					tmpLevel.setText((""+manager.getLevel(i)));
 					tmpLevel.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
 					
-					tmpScore.setText(((""+manager.getScore(i))));
+					tmpScore.setText(((""+manager.getHighscore(i))));
 					tmpScore.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
 				}
 				
