@@ -64,7 +64,7 @@ class UserManagement
 			OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
 			
 			for (int i = 0; i < users.size(); i++)
-				myOutWriter.append(users.get(i).print());
+				myOutWriter.append(users.get(i).print() + "\n");
 			
 			myOutWriter.close();
 			fOut.close();
@@ -134,7 +134,7 @@ class UserManagement
 			return -1;
 	}
 	
-	void updateHighScore(int index, int newScore)
+	void addScore(int index, int newScore)
 	{
 		users.get(index).addScore(newScore);
 	}

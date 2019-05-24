@@ -65,7 +65,7 @@ public class UserManager extends AppCompatActivity
 					}
 				});
 				userSelect.addView(tmp);
-				Log.d("NPB", manager.getName(i) + " Highscore: " + manager.getHighScore(i));
+				Log.d("NPB", manager.getName(i) + " Level: " + manager.getLevel(i));
 			}
 		}
 	}

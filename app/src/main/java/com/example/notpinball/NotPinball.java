@@ -1,7 +1,6 @@
 package com.example.notpinball;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import android.content.Context;
@@ -178,7 +177,7 @@ public class NotPinball extends AppCompatActivity
 	public void winRound()
 	{
 		totalScore += currScore;
-		manager.updateHighScore(0,totalScore);
+		manager.addScore(0,totalScore);
 		Level++;
 		manager.updateLevel(0,Level);
 		create();
@@ -188,8 +187,9 @@ public class NotPinball extends AppCompatActivity
 	{
 		playerHealth = playerMaxHealth;
 		totalScore += currScore;
-		manager.updateHighScore(0,totalScore);
+		manager.addScore(0,totalScore);
 		manager.updateLevel(0,Level);
+		manager.save();
 		totalScore = 0;
 		lastTargetScore = 0;
 		create();
@@ -236,17 +236,23 @@ public class NotPinball extends AppCompatActivity
 				{
 					for (int i = sprites.size() - 1; i >= 0; i--)
 					{
-						if (!sprites.isEmpty())
+						try
 						{
-							if (sprites.get(i).dead)
-								tmp.add(sprites.get(i));
-							if (run)
-								sprites.get(i).update(sprites);
-							sprites.get(i).draw(canvas);
-							showLivesScore();
+							if (!sprites.isEmpty())
+							{
+								sprites.get(i).draw(canvas);
+								if (sprites.get(i).dead)
+									tmp.add(sprites.get(i));
+								if (run)
+									sprites.get(i).update(sprites);
+								showLivesScore();
+							} else
+								break;
 						}
-						else
-							break;
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
 					}
 					for (npbObject n : tmp)
 						sprites.remove(n);

@@ -24,11 +24,12 @@ public class User
 	public void addScore(int newScore)
 	{
 		highScore.add(newScore);
-		Collections.sort(highScore);
 	}
 	
 	public String print()
 	{
+		Collections.sort(highScore);
+		Collections.reverse(highScore);
 		StringBuilder b = new StringBuilder(name + "," + level);
 		for(int i :highScore)
 			b.append(","+i);
