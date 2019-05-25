@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class ObstacleSpike extends npbObject
+class ObstacleSpike extends npbObject
 {
-	public ObstacleSpike(float X, float Y, int Radius, Context context)
+	ObstacleSpike(float X, float Y, int Radius, Context context)
 	{
 		super(X, Y, Radius, context);
 		thisType = type.ObstacleSpiked;

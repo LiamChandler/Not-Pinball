@@ -15,19 +15,19 @@ public class textShow extends npbObject
 	private int color;
 	private boolean fading = true;
 	
-	int alpha = 350;
+	private int alpha = 350;
 	
 	public textShow(float X, float Y, int TextSize, String Text, int Color, Context context)
 	{
-		super(X, Y, TextSize * 2,context);
+		super(X, Y, TextSize * 2, context);
 		thisType = type.nonColliding;
 		text = Text;
 		color = Color;
 	}
 	
-	public textShow(float X,float Y, int TextSize,String Text, int Color, int Fade,Context context)
+	public textShow(float X, float Y, int TextSize, String Text, int Color, int Fade, Context context)
 	{
-		super(X, Y, TextSize * 2,context);
+		super(X, Y, TextSize * 2, context);
 		thisType = type.nonColliding;
 		text = Text;
 		color = Color;
@@ -38,24 +38,21 @@ public class textShow extends npbObject
 	@Override
 	public void draw(Canvas canvas)
 	{
-		int tmpAlpha = alpha;
-		if(tmpAlpha < 0)
-			tmpAlpha = 0;
-		else if (tmpAlpha > 255)
-			tmpAlpha = 255;
-		
-		Paint p = new Paint();
-		p.setColor(color);
-		p.setAlpha(tmpAlpha);
-		p.setTextSize(radius);
-		p.setTextAlign(Paint.Align.CENTER);
-		canvas.drawText(text, P.x, P.y - NotPinball.cameraPos, p);
+		if(alpha>4)
+		{
+			Paint p = new Paint();
+			p.setColor(color);
+			p.setAlpha(alpha < 255 ? alpha : 255);
+			p.setTextSize(radius);
+			p.setTextAlign(Paint.Align.CENTER);
+			canvas.drawText(text, x, y - NotPinball.cameraPos, p);
+		}
 	}
 	
 	@Override
 	public void update(List<npbObject> sprites)
 	{
-		if(fading)
+		if (fading)
 		{
 			if (alpha > 0)
 				alpha -= 3;

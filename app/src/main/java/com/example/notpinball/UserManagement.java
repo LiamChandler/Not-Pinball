@@ -22,7 +22,6 @@ class UserManagement
 	{
 		context = c;
 		this.load();
-		this.print();
 	}
 	
 	void load()

@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		manager = new UserManagement(this);
 	}
 	
 	@Override
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity
 	{
 		super.onResume();
 		
+		manager = new UserManagement(this);
 		currentUser = findViewById(R.id.textCurrentUser);
 		if(manager.getLevel(0) != -1)
 			currentUser.setText(("Current user: "+manager.getName(0)));

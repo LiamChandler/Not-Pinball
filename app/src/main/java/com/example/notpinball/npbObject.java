@@ -10,9 +10,10 @@ import java.util.List;
 
 public abstract class npbObject
 {
-	PointF P = new PointF(), P2, dP = new PointF(), ddP = new PointF();
+	float x, y,x2, dX, dY, accdX, accdY;
+	
 	int radius;
-	boolean dead = false, won = false, lose = false, dying = false;
+	boolean dead = false, won = false, lose = false, dying = false, renderTwice = false;
 	type thisType;
 	Context context;
 	Bitmap image;
@@ -26,102 +27,109 @@ public abstract class npbObject
 	{
 		this.context = context;
 		radius = Radius;
-		P.set(X,Y);
+		x = X;
+		y = Y;
 	}
 	
 	public void update(List<npbObject> sprites)
 	{
-		P.x += dP.x;
+		x += dX;
 		
-		if (P.x < 0)
-			P.x = NotPinball.screenWidth;
-		else if (P.x > NotPinball.screenWidth)
-			P.x = 0;
+		if (x < 0)
+			x = NotPinball.screenWidth;
+		else if (x > NotPinball.screenWidth)
+			x = 0;
 		
-		if (((P.y + dP.y + radius) < NotPinball.gameLength) || thisType == type.Player && (P.y + dP.y - radius > 0))
-			P.y += dP.y;
+		if (((y + dY + radius) < NotPinball.gameLength) || thisType == type.Player && (y + dY - radius > 0))
+			y += dY;
 		else
 		{
-			dP.y = -dP.y;
-			P.y += dP.y;
+			dY = -dY;
+			y += dY;
 		}
 		
-		if (P.x + radius < 0)
-			P.x++;
-		else if (P.x - radius > NotPinball.screenWidth)
-			P.x--;
-		
+		if (x + radius < 0)
+			x++;
+		else if (x - radius > NotPinball.screenWidth)
+			x--;
 		
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if (Math.abs(P.y - other.getY()) < (radius * 4))
+			if (Math.abs(y - other.getY()) < (radius * 4))
 			{
-				float dist = (float) Math.hypot(Math.abs(P.x - other.getX()), Math.abs(P.y - other.getY()));
+				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
 				
 				if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
 				{
 					float fOverlap = dist - radius - other.radius;
-					P.x -= (fOverlap * (P.x - other.P.x) / dist) * 0.8f;
-					P.y -= (fOverlap * (P.y - other.P.y) / dist) * 0.8f;
+					x -= (fOverlap * (x - other.x) / dist) * 0.8f;
+					y -= (fOverlap * (y - other.y) / dist) * 0.8f;
 				}
 			}
 		}
 		
-		if (P.x < radius)
-			P2 = new PointF(P.x + NotPinball.screenWidth, P.y);
-		else if (P.x > NotPinball.screenWidth - radius)
-			P2 = new PointF(P.x - NotPinball.screenWidth, P.y);
-		else
-			P2 = null;
+		if (x < radius)
+		{
+			renderTwice = true;
+			x2= x + NotPinball.screenWidth;
+		} else if (x > NotPinball.screenWidth - radius)
+		{
+			renderTwice = true;
+			x2 = x - NotPinball.screenWidth;
+		} else
+			renderTwice= false;
 	}
 	
 	public void draw(Canvas canvas)
 	{
 		Paint p1 = new Paint();
-		canvas.drawBitmap(image, (P.x - radius), (P.y - NotPinball.cameraPos - radius), p1);
-		if(P2 != null)
-			canvas.drawBitmap(image, (P2.x - radius), (P2.y - NotPinball.cameraPos - radius), p1);
+			
+		canvas.drawBitmap(image, (x - radius), (y - NotPinball.cameraPos - radius), p1);
+		if(renderTwice)
+			canvas.drawBitmap(image, x2 - radius, (y - NotPinball.cameraPos - radius), p1);
 	}
 	
 	public float getX()
 	{
-		return P.x;
+		return x;
 	}
 	
 	public float getY()
 	{
-		return P.y;
+		return y;
 	}
 	
 	public void setdX(float DX)
 	{
-		dP.x = DX;
+		dX = DX;
 	}
 	
 	public void setdY(float DY)
 	{
-		dP.y = DY;
+		dY = DY;
 	}
 	
 	public float getdX()
 	{
-		return dP.x;
+		return dX;
 	}
 	
 	public float getdY()
 	{
-		return dP.y;
+		return dY;
 	}
 	
 	public void moddX(float modDX)
 	{
-		ddP.x += modDX;
+		if (x >= 0 && x <= NotPinball.screenWidth)
+			if (Math.abs(dX + modDX) < NotPinball.maxSpeed)
+				dX += modDX;
 	}
 	
 	public void moddY(float accDY)
 	{
-		ddP.y = accDY;
+		accdY = accDY;
 	}
 	
 	public int getRadius()
@@ -131,7 +139,7 @@ public abstract class npbObject
 	
 	boolean onScreen()
 	{
-		return (P.y > (NotPinball.cameraPos - NotPinball.screenHeight * 0.1f) && P.y < (NotPinball.cameraPos + NotPinball.screenHeight * 1.1f));
+		return (y > (NotPinball.cameraPos - NotPinball.screenHeight * 0.1f) && y < (NotPinball.cameraPos + NotPinball.screenHeight * 1.1f));
 	}
 }
 

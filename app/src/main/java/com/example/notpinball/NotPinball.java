@@ -204,13 +204,8 @@ public class NotPinball extends AppCompatActivity
 		@Override
 		public void onSensorChanged(SensorEvent sensorEvent)
 		{
-			tmp = -sensorEvent.values[0]/4;
-			if(tmp <-5)
-				tmp = -5;
-			else if(tmp > 5)
-				tmp = 5;
-			if(!sprites.isEmpty() && run)
-				sprites.get(0).moddX(tmp);
+			if (!sprites.isEmpty() && run)
+				sprites.get(0).moddX(-sensorEvent.values[0] / 5);
 		}
 		
 		@Override
