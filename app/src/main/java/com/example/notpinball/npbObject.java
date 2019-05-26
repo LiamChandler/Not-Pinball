@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PointF;
 
 import java.util.List;
 
@@ -56,9 +55,9 @@ public abstract class npbObject
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if (Math.abs(y - other.getY()) < (radius * 4))
+			if (Math.abs(y - other.y) < (other.radius * 2))
 			{
-				float dist = (float) Math.hypot(Math.abs(x - other.getX()), Math.abs(y - other.getY()));
+				float dist = (float) Math.hypot(Math.abs(x - other.x), Math.abs(y - other.y));
 				
 				if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
 				{
@@ -72,13 +71,13 @@ public abstract class npbObject
 		if (x < radius)
 		{
 			renderTwice = true;
-			x2= x + NotPinball.screenWidth;
+			x2 = x + NotPinball.screenWidth;
 		} else if (x > NotPinball.screenWidth - radius)
 		{
 			renderTwice = true;
 			x2 = x - NotPinball.screenWidth;
 		} else
-			renderTwice= false;
+			renderTwice = false;
 	}
 	
 	public void draw(Canvas canvas)
@@ -90,16 +89,6 @@ public abstract class npbObject
 			canvas.drawBitmap(image, x2 - radius, (y - NotPinball.cameraPos - radius), p1);
 	}
 	
-	public float getX()
-	{
-		return x;
-	}
-	
-	public float getY()
-	{
-		return y;
-	}
-	
 	public void setdX(float DX)
 	{
 		dX = DX;
@@ -108,16 +97,6 @@ public abstract class npbObject
 	public void setdY(float DY)
 	{
 		dY = DY;
-	}
-	
-	public float getdX()
-	{
-		return dX;
-	}
-	
-	public float getdY()
-	{
-		return dY;
 	}
 	
 	public void moddX(float modDX)
