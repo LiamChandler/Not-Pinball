@@ -2,7 +2,6 @@ package com.example.notpinball;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import java.util.List;
 
 public class ObstacleMoving extends npbObject
@@ -10,7 +9,7 @@ public class ObstacleMoving extends npbObject
 	ObstacleMoving(float X, float Y, int Radius, Context context)
 	{
 		super(X, Y, Radius, context);
-		image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.moving_sprite), radius * 2, radius * 2, true);
+		image = Bitmap.createScaledBitmap(NotPinball.spriteMoving, radius * 2, radius * 2, true);
 		thisType = type.ObstacleMoving;
 	}
 	

@@ -2,7 +2,6 @@ package com.example.notpinball;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 class ObstacleSolid extends npbObject
 {
@@ -10,6 +9,6 @@ class ObstacleSolid extends npbObject
 	{
 		super(X, Y, Radius, context);
 		thisType = type.ObstacleSolid;
-		image = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.solid_sprite),radius*2,radius*2,true);
+		image = Bitmap.createScaledBitmap(NotPinball.spriteSolid,radius*2,radius*2,true);
 	}
 }

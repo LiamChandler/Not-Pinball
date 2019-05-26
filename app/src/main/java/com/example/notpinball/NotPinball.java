@@ -5,6 +5,8 @@ import androidx.core.view.GestureDetectorCompat;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -44,6 +46,7 @@ public class NotPinball extends AppCompatActivity
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos;
 	public static final int playerMaxHealth = 5;
+	public static Bitmap spriteMoving, spriteSolid, spriteTarget, spriteSpike;
 	
 	List<npbObject> sprites;
 	
@@ -90,6 +93,11 @@ public class NotPinball extends AppCompatActivity
 		layout.addView(scoreDisplay);
 		layout.setBackgroundColor(Color.BLACK);
 		setContentView(layout);
+		
+		spriteMoving = BitmapFactory.decodeResource(getResources(), R.drawable.moving_sprite);
+		spriteSolid = BitmapFactory.decodeResource(getResources(), R.drawable.solid_sprite);
+		spriteSpike = BitmapFactory.decodeResource(getResources(), R.drawable.spike_sprite);
+		spriteTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target_sprite);
 		
 		Level = manager.getLevel(0);
 		if(Level == -1)

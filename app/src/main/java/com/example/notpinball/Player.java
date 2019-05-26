@@ -90,6 +90,7 @@ public class Player extends npbObject
 						}
 						else
 						{
+							NotPinball.lastTargetScore = 0;
 							NotPinball.playerHealth--;
 							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
 							bounceOffOther(other, dist);
@@ -128,6 +129,7 @@ public class Player extends npbObject
 							}
 							else
 							{
+								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
 								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
 								bounceOffOther2nd(other, dist);
@@ -168,6 +170,7 @@ public class Player extends npbObject
 							}
 							else
 							{
+								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
 								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
 								bounceOffThis2nd(other, dist);
