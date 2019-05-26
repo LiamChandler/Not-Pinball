@@ -124,13 +124,14 @@ public class NotPinball extends AppCompatActivity
 		sprites = new ArrayList<>();
 		sprites.add(new Player(screenWidth * 0.5f, playerStartY, radiusPlayer,this));
 		
+		generateObstacles((int)(15*Math.pow(Level+4,.25)));
+		
+		manager.load();
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.1f, textSize*2, ("Highscore: " + manager.getHighScore(0)), Color.rgb(255, 255, 255),this));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.45f, textSize * 3, "Level", Color.rgb(0, 0, 0), 70,this));
 		sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.68f, textSize * 13, Integer.toString(Level), Color.rgb(0, 0, 0), 70,this));
 		if(totalScore == 0)
 			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0),this));
-		
-		generateObstacles((int)(15*Math.pow(Level+4,.25)));
 		
 		sprites.add(new finishLine(gameLength, screenHeight / 20f,this));
 		
@@ -193,6 +194,7 @@ public class NotPinball extends AppCompatActivity
 		totalScore += currScore;
 		manager.addScore(0,totalScore);
 		manager.updateLevel(0,Level);
+		manager.save();
 		totalScore = 0;
 		lastTargetScore = 0;
 		create();
@@ -200,7 +202,6 @@ public class NotPinball extends AppCompatActivity
 	
 	class AccelerometerListener implements SensorEventListener
 	{
-		float tmp;
 		@Override
 		public void onSensorChanged(SensorEvent sensorEvent)
 		{
