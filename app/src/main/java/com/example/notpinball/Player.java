@@ -85,14 +85,14 @@ public class Player extends npbObject
 						else if (other.thisType == type.ObstacleSpiked)
 						{
 							NotPinball.playerHealth = 0;
-							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(180, 0, 0), context));
+							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
 							bounceOffOther(other, dist);
 						}
 						else
 						{
 							NotPinball.lastTargetScore = 0;
 							NotPinball.playerHealth--;
-							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
+							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
 							bounceOffOther(other, dist);
 						}
 						
@@ -124,14 +124,14 @@ public class Player extends npbObject
 							else if (other.thisType == type.ObstacleSpiked)
 							{
 								NotPinball.playerHealth = 0;
-								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(180, 0, 0), context));
+								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
 								bounceOffOther2nd(other, dist);
 							}
 							else
 							{
 								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
-								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
+								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
 								bounceOffOther2nd(other, dist);
 							}
 							
@@ -165,14 +165,14 @@ public class Player extends npbObject
 							else if (other.thisType == type.ObstacleSpiked)
 							{
 								NotPinball.playerHealth = 0;
-								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "☠", Color.rgb(180, 0, 0), context));
+								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
 								bounceOffThis2nd(other, dist);
 							}
 							else
 							{
 								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
-								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "-❤", Color.rgb(180, 0, 0), context));
+								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
 								bounceOffThis2nd(other, dist);
 							}
 							
