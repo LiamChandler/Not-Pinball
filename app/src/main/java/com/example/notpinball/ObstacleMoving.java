@@ -29,14 +29,7 @@ public class ObstacleMoving extends npbObject
 					if (dist <= radius + sprites.get(i).getRadius())
 					{
 						float nX = (other.x - x) / dist, nY = (other.y - y) / dist;
-						float tX = -nY, tY = nX;
-						float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-						
-						dX = tX * dpTan + nX * -dpNorm;
-						dY = tY * dpTan + nY * -dpNorm;
-						
-						dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
-						dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
+						bounceOffRound(nY, nX);
 					}
 					if (other.renderTwice)
 					{
@@ -44,29 +37,15 @@ public class ObstacleMoving extends npbObject
 						if (dist <= radius + other.getRadius())
 						{
 							float nX = (other.x2 - x) / dist, nY = (other.y - y) / dist;
-							float tX = -nY, tY = nX;
-							float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-							
-							dX = tX * dpTan + nX * -dpNorm;
-							dY = tY * dpTan + nY * -dpNorm;
-							
-							dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
-							dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
+							bounceOffRound(nY, nX);
 						}
 					} else if (renderTwice)
 					{
 						dist = (float) Math.hypot(Math.abs(x2 - other.x), Math.abs(y - other.y));
 						if (dist <= radius + other.getRadius())
 						{
-							float nX = (other.x - x2) / dist, nY = (other.y - y) / dist;
-							float tX = -nY, tY = nX;
-							float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-							
-							dX = tX * dpTan + nX * -dpNorm;
-							dY = tY * dpTan + nY * -dpNorm;
-							
-							dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
-							dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
+							float nY = (other.y - y) / dist, nX = (other.x - x2) / dist;
+							bounceOffRound(nY, nX);
 						}
 					}
 				}

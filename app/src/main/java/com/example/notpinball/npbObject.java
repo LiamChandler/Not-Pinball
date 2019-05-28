@@ -52,18 +52,40 @@ public abstract class npbObject
 		else if (x - radius > NotPinball.screenWidth)
 			x--;
 		
+		float dist;
 		for (int i = 1; i < sprites.size(); i++)
 		{
 			npbObject other = sprites.get(i);
-			if (Math.abs(y - other.y) < (other.radius * 2))
+			if (x!=other.x && y != other.y && Math.abs(y - other.y) < (other.radius * 3))
 			{
-				float dist = (float) Math.hypot(Math.abs(x - other.x), Math.abs(y - other.y));
-				
+				dist= (float) Math.hypot(Math.abs(x - other.x), Math.abs(y - other.y));
 				if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
 				{
 					float fOverlap = dist - radius - other.radius;
 					x -= (fOverlap * (x - other.x) / dist) * 0.8f;
 					y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+				}
+				if (other.renderTwice)
+				{
+					dist= (float) Math.hypot(Math.abs(x - other.x2), Math.abs(y - other.y));
+					
+					if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
+					{
+						float fOverlap = dist - radius - other.radius;
+						x -= (fOverlap * (x - other.x2) / dist) * 0.8f;
+						y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+					}
+				}
+				else if (renderTwice)
+				{
+					dist = (float) Math.hypot(Math.abs(x2 - other.x), Math.abs(y - other.y));
+					
+					if (dist <= radius + sprites.get(i).getRadius() && other.thisType != type.nonColliding && dist != 0)
+					{
+						float fOverlap = dist - radius - other.radius;
+						x -= (fOverlap * (x2 - other.x) / dist) * 0.8f;
+						y -= (fOverlap * (y - other.y) / dist) * 0.8f;
+					}
 				}
 			}
 		}
@@ -119,6 +141,17 @@ public abstract class npbObject
 	boolean onScreen()
 	{
 		return (y > (NotPinball.cameraPos - NotPinball.screenHeight * 0.1f) && y < (NotPinball.cameraPos + NotPinball.screenHeight * 1.1f));
+	}
+	
+	void bounceOffRound(float nY, float nX)
+	{
+		float tX = -nY, tY = nX, dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
+		
+		dX = tX * dpTan + nX * -dpNorm;
+		dY = tY * dpTan + nY * -dpNorm;
+		
+		dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
+		dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
 	}
 }
 

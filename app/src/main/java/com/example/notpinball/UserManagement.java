@@ -111,6 +111,11 @@ class UserManagement
 		return users.size();
 	}
 	
+	List<User> getUsers()
+	{
+		return users;
+	}
+	
 	void updateLevel(int index, int newLevel)
 	{
 		users.get(index).updateLevel(newLevel);
@@ -148,25 +153,9 @@ class UserManagement
 			return users.get(index).highScore.get(0);
 	}
 	
-	int getAveScore(int index)
+	int getAverageScore(int index)
 	{
-		if(users.get(index).highScore.isEmpty() && users.get(index).getCurrentScore() == 0)
-			return 0;
-		else
-		{
-			int tmp = 0,count = 0;
-			if(users.get(index).getCurrentScore() != 0)
-			{
-				tmp =users.get(index).getCurrentScore();
-				count++;
-			}
-			for(int i = 0; i<users.get(index).highScore.size();i++)
-			{
-				tmp += users.get(index).highScore.get(i);
-				count++;
-			}
-			return (tmp/count);
-		}
+		return users.get(index).getAverageScore();
 	}
 	
 	int getCurrentScore(int index)
@@ -192,7 +181,7 @@ class UserManagement
 	{
 		for (int i = 0; i < users.size(); i++)
 		{
-			Log.d("NPB", i + " "+users.get(i).print() + " Average Score: " + this.getAveScore(i));
+			Log.d("NPB", i + " "+users.get(i).print() + " Average Score: " + this.getAverageScore(i));
 		}
 	}
 }

@@ -171,9 +171,10 @@ public class NotPinball extends AppCompatActivity
 		percent = (int) (gameLength - screenHeight * 0.4f) / moving;
 		for (int i = 0; i < moving; i++)
 		{
-			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle,this);
-			tmpO.setdX(((rand.nextFloat() * maxSpeed / 2f) - maxSpeed /4f) + 2.5f);
-			tmpO.setdY(((rand.nextFloat() * maxSpeed) / 8f) - (maxSpeed / 16f));
+			npbObject tmpO = new ObstacleMoving(rand.nextInt(screenWidth) + radiusObstacle, rand.nextInt(percent) + (percent * i) + screenHeight * 0.3f, radiusObstacle, this);
+			float tmp = ((rand.nextFloat() * maxSpeed / 2f) - maxSpeed / 4f);
+			tmpO.setdX(tmp < 0 ? tmp - 1 : tmp + 1);
+			tmpO.setdY(((rand.nextFloat() * maxSpeed) / 4f) - (maxSpeed / 8f));
 			sprites.add(tmpO);
 		}
 		

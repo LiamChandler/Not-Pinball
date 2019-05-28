@@ -10,6 +10,9 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.List;
+
 public class Highscores extends AppCompatActivity
 {
 	LinearLayout highscoreView;
@@ -24,53 +27,72 @@ public class Highscores extends AppCompatActivity
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+		
 		UserManagement manager = new UserManagement(this);
 		highscoreView = findViewById(R.id.userHighscoreShowView);
-		TextView tmpName, tmpScore,tmpLevel;
+		TextView tmpName, tmpHighscore, tmpLevel, tmpAveScore;
 		LinearLayout l;
 		
-		int num = manager.getSize(), width = displayMetrics.widthPixels-32;
+		List<User> users = manager.getUsers();
+		Collections.sort(users);
+		
+		int num = users.size(), width = displayMetrics.widthPixels - 32;
 		if (num > 0)
 		{
 			for (int i = -1; i < num; i++)
 			{
 				tmpName = new TextView(this);
-				tmpName.setMinWidth((int) (width * 0.3));
+				tmpName.setMinWidth((int) (width * 0.25));
 				tmpLevel = new TextView(this);
-				tmpLevel.setMinWidth((int) (width * 0.20));
-				tmpScore = new TextView(this);
+				tmpLevel.setMinWidth((int) (width * 0.15));
+				tmpHighscore = new TextView(this);
+				tmpHighscore.setMinWidth((int) (width * 0.25));
+				tmpAveScore = new TextView(this);
 				
-				if(i == -1)
+				if (i == -1)
 				{
-					tmpName.setMinHeight(120);
-					tmpName.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+					tmpName.setMinHeight(70);
+					tmpName.setTextAppearance(R.style.TextAppearance_AppCompat_Body2);
 					tmpName.setText("Name");
 					
 					tmpLevel.setText("Level");
-					tmpLevel.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
+					tmpLevel.setTextAppearance(R.style.TextAppearance_AppCompat_Body2);
 					
-					tmpScore.setText("High Score");
-					tmpScore.setTextAppearance(R.style.TextAppearance_AppCompat_Headline);
-				}
-				else
+					tmpHighscore.setText("High Score");
+					tmpHighscore.setTextAppearance(R.style.TextAppearance_AppCompat_Body2);
+					
+					tmpAveScore.setText("Average Score");
+					tmpAveScore.setTextAppearance(R.style.TextAppearance_AppCompat_Body2);
+					
+					l = new LinearLayout(this);
+					l.setOrientation(LinearLayout.HORIZONTAL);
+					l.addView(tmpName);
+					l.addView(tmpLevel);
+					l.addView(tmpHighscore);
+					l.addView(tmpAveScore);
+					highscoreView.addView(l);
+				} else
 				{
-					tmpName.setText((manager.getName(i)));
+					tmpName.setText(users.get(i).name);
 					tmpName.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
 					
-					tmpLevel.setText((""+manager.getLevel(i)));
+					tmpLevel.setText(String.valueOf(users.get(i).level));
 					tmpLevel.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
 					
-					tmpScore.setText(((""+manager.getHighscore(i))));
-					tmpScore.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
+					tmpHighscore.setText(String.valueOf(users.get(i).getHighscore()));
+					tmpHighscore.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
+					
+					tmpAveScore.setText(String.valueOf(users.get(i).getAverageScore()));
+					tmpAveScore.setTextAppearance(R.style.TextAppearance_AppCompat_Body1);
+					
+					l = new LinearLayout(this);
+					l.setOrientation(LinearLayout.HORIZONTAL);
+					l.addView(tmpName);
+					l.addView(tmpLevel);
+					l.addView(tmpHighscore);
+					l.addView(tmpAveScore);
+					highscoreView.addView(l);
 				}
-				
-				l = new LinearLayout(this);
-				l.setOrientation(LinearLayout.HORIZONTAL);
-				l.addView(tmpName);
-				l.addView(tmpLevel);
-				l.addView(tmpScore);
-				highscoreView.addView(l);
 			}
 		}
 	}

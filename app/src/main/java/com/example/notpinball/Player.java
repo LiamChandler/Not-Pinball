@@ -86,14 +86,16 @@ public class Player extends npbObject
 						{
 							NotPinball.playerHealth = 0;
 							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
-							bounceOffOther(other, dist);
+							float nX = (other.x - x) / dist, nY = (other.y - y) / dist;
+							bounceOffRound(nY, nX);
 						}
 						else
 						{
 							NotPinball.lastTargetScore = 0;
 							NotPinball.playerHealth--;
 							sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
-							bounceOffOther(other, dist);
+							float nX = (other.x - x) / dist, nY = (other.y - y) / dist;
+							bounceOffRound(nY, nX);
 						}
 						
 						if (NotPinball.playerHealth <= 0)
@@ -125,14 +127,16 @@ public class Player extends npbObject
 							{
 								NotPinball.playerHealth = 0;
 								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
-								bounceOffOther2nd(other, dist);
+								float nX = (other.x2 - x) / dist, nY = (other.y - y) / dist;
+								bounceOffRound(nY, nX);
 							}
 							else
 							{
 								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
 								sprites.add(new textShow(x, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
-								bounceOffOther2nd(other, dist);
+								float nX = (other.x2 - x) / dist, nY = (other.y - y) / dist;
+								bounceOffRound(nY, nX);
 							}
 							
 							if (NotPinball.playerHealth <= 0)
@@ -166,14 +170,16 @@ public class Player extends npbObject
 							{
 								NotPinball.playerHealth = 0;
 								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "☠", Color.rgb(0, 0, 0), context));
-								bounceOffThis2nd(other, dist);
+								float nY = (other.y - y) / dist, nX = (other.x - x2) / dist;
+								bounceOffRound(nY, nX);
 							}
 							else
 							{
 								NotPinball.lastTargetScore = 0;
 								NotPinball.playerHealth--;
 								sprites.add(new textShow(x2, y, NotPinball.textSize * 2, "-❤", Color.rgb(255, 0, 0), context));
-								bounceOffThis2nd(other, dist);
+								float nY = (other.y - y) / dist, nX = (other.x - x2) / dist;
+								bounceOffRound(nY, nX);
 							}
 							
 							if (NotPinball.playerHealth <= 0)
@@ -193,39 +199,6 @@ public class Player extends npbObject
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * scrollPos;
 		else if (y - NotPinball.cameraPos > NotPinball.screenHeight * (scrollPos + scrollZone) && NotPinball.cameraPos < NotPinball.gameLength - (NotPinball.screenHeight * (scrollPos + scrollZone)))
 			NotPinball.cameraPos += y - NotPinball.cameraPos - NotPinball.screenHeight * (scrollPos + scrollZone);
-	}
-	
-	private void bounceOffOther(npbObject other, float dist)
-	{
-		float nX = (other.x - x) / dist, nY = (other.y - y) / dist;
-		float tX = -nY, tY = nX;
-		float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-		
-		dX = tX * dpTan + nX * -dpNorm;
-		dY = tY * dpTan + nY * -dpNorm;
-		
-		dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
-		dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
-	}
-	
-	private void bounceOffOther2nd(npbObject other, float dist)
-	{
-		float nX = (other.x2 - x) / dist, nY = (other.y - y) / dist;
-		float tX = -nY, tY = nX;
-		float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-		
-		dX = tX * dpTan + nX * -dpNorm;
-		dY = tY * dpTan + nY * -dpNorm;
-	}
-	
-	private void bounceOffThis2nd(npbObject other, float dist)
-	{
-		float nX = (other.x - x2) / dist, nY = (other.y - y) / dist;
-		float tX = -nY, tY = nX;
-		float dpTan = dX * tX + dY * tY, dpNorm = dX * nX + dY * nY;
-		
-		dX = tX * dpTan + nX * -dpNorm;
-		dY = tY * dpTan + nY * -dpNorm;
 	}
 	
 	class shortCoolDown extends TimerTask
