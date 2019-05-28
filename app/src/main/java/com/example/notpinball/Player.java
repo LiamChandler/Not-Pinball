@@ -203,6 +203,9 @@ public class Player extends npbObject
 		
 		dX = tX * dpTan + nX * -dpNorm;
 		dY = tY * dpTan + nY * -dpNorm;
+		
+		dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
+		dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
 	}
 	
 	private void bounceOffOther2nd(npbObject other, float dist)

@@ -34,6 +34,9 @@ public class ObstacleMoving extends npbObject
 						
 						dX = tX * dpTan + nX * -dpNorm;
 						dY = tY * dpTan + nY * -dpNorm;
+						
+						dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
+						dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
 					}
 					if (other.renderTwice)
 					{
@@ -46,6 +49,9 @@ public class ObstacleMoving extends npbObject
 							
 							dX = tX * dpTan + nX * -dpNorm;
 							dY = tY * dpTan + nY * -dpNorm;
+							
+							dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
+							dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
 						}
 					} else if (renderTwice)
 					{
@@ -58,6 +64,9 @@ public class ObstacleMoving extends npbObject
 							
 							dX = tX * dpTan + nX * -dpNorm;
 							dY = tY * dpTan + nY * -dpNorm;
+							
+							dX = dX < NotPinball.maxSpeed ? dX : NotPinball.maxSpeed;
+							dY = dY < NotPinball.maxSpeed ? dY : NotPinball.maxSpeed;
 						}
 					}
 				}
