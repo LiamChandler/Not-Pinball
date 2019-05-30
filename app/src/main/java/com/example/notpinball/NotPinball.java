@@ -46,7 +46,7 @@ public class NotPinball extends AppCompatActivity
 	int radiusPlayer, radiusObstacle;
 	public static float cameraPos;
 	public static final int playerMaxHealth = 5;
-	public static Bitmap spriteMoving, spriteSolid, spriteTarget, spriteSpike;
+	public static Bitmap spriteMoving, spriteSolid, spriteTarget, spriteSpike, spriteFinish;
 	
 	List<npbObject> sprites;
 	
@@ -98,6 +98,7 @@ public class NotPinball extends AppCompatActivity
 		spriteSolid = BitmapFactory.decodeResource(getResources(), R.drawable.solid_sprite);
 		spriteSpike = BitmapFactory.decodeResource(getResources(), R.drawable.spike_sprite);
 		spriteTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target_sprite);
+		spriteFinish = BitmapFactory.decodeResource(getResources(), R.drawable.finish_sprite);
 		
 		Level = manager.getLevel(0);
 		if(Level == -1)
@@ -141,7 +142,7 @@ public class NotPinball extends AppCompatActivity
 		if(totalScore == 0)
 			sprites.add(new textShow(screenWidth / 2f, screenHeight * 0.25f, textSize * 4, "Tap to Start", Color.rgb(0, 0, 0),this));
 		
-		sprites.add(new finishLine(gameLength, screenHeight / 20f,this));
+		sprites.add(new finishLine(gameLength, (int)(screenHeight / 30f),this));
 		
 		for (int i = sprites.size() - 1; i >= 0; i--)
 			sprites.get(i).update(sprites);
