@@ -37,18 +37,23 @@ public class Player extends npbObject
 	public void update(List<npbObject> sprites)
 	{
 		super.update(sprites);
-		if (y > NotPinball.gameLength && !lose)
+		if (y > NotPinball.gameLength && !lose && !won)
+		{
 			won = true;
-		else if (y > playerMaxPos && !lose)
+			playerMaxPos = y - NotPinball.playerStartY;
+			NotPinball.currScore = (int) ((playerMaxPos / ((NotPinball.gameLength - NotPinball.playerStartY) / 100))) * NotPinball.Level;
+		}
+		else if (y - NotPinball.playerStartY > playerMaxPos && !lose && !won)
 		{
 			playerMaxPos = y - NotPinball.playerStartY;
 			NotPinball.currScore = (int) ((playerMaxPos / ((NotPinball.gameLength - NotPinball.playerStartY) / 100))) * NotPinball.Level;
 		}
+
 		if (dying && radius >= 1)
 			radius--;
 		
 		if (dY < NotPinball.maxSpeed)
-			dY += 0.3;
+			dY += 0.25;
 		else
 			dY = NotPinball.maxSpeed;
 		
@@ -209,5 +214,4 @@ public class Player extends npbObject
 			timerCoolDown = false;
 		}
 	}
-	
 }

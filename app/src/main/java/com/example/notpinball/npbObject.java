@@ -106,9 +106,9 @@ public abstract class npbObject
 	{
 		Paint p1 = new Paint();
 			
-		canvas.drawBitmap(image, (x - radius), (y - NotPinball.cameraPos - radius), p1);
+		canvas.drawBitmap(image, (x - radius-5), (y - NotPinball.cameraPos - radius-5), p1);
 		if(renderTwice)
-			canvas.drawBitmap(image, x2 - radius, (y - NotPinball.cameraPos - radius), p1);
+			canvas.drawBitmap(image, x2 - radius-5, (y - NotPinball.cameraPos - radius-5), p1);
 	}
 	
 	public void setdX(float DX)

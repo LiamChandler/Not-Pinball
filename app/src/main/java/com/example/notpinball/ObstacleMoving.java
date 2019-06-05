@@ -9,7 +9,7 @@ public class ObstacleMoving extends npbObject
 	ObstacleMoving(float X, float Y, int Radius, Context context)
 	{
 		super(X, Y, Radius, context);
-		image = Bitmap.createScaledBitmap(NotPinball.spriteMoving, radius * 2, radius * 2, true);
+		image = Bitmap.createScaledBitmap(NotPinball.spriteMoving, radius*2+10,radius*2+10, true);
 		thisType = type.ObstacleMoving;
 	}
 	

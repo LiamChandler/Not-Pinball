@@ -259,12 +259,12 @@ public class NotPinball extends AppCompatActivity
 								if (run)
 									sprites.get(i).update(sprites);
 								sprites.get(i).draw(canvas);
-								showLivesScore();
 							}
 						}
 						for (npbObject n : tmp)
 							sprites.remove(n);
 					}
+					showLivesScore();
 				}
 			} catch (Exception e)
 			{

@@ -9,6 +9,6 @@ class ObstacleSolid extends npbObject
 	{
 		super(X, Y, Radius, context);
 		thisType = type.ObstacleSolid;
-		image = Bitmap.createScaledBitmap(NotPinball.spriteSolid,radius*2,radius*2,true);
+		image = Bitmap.createScaledBitmap(NotPinball.spriteSolid,radius*2+10,radius*2+10,true);
 	}
 }
